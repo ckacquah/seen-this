@@ -25,7 +25,7 @@ htmlcov/
 *,cover
 
 # custom stuff
-migrations/*
+migrations
 database.db
 *.sqlite3
 *db
