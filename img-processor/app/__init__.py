@@ -14,11 +14,12 @@ from flask_migrate import Migrate
 # Import app models & blueprints
 from app.models import db
 from app.seeders import run_seeds
+from app.tasks import celery
 from app.modules.uploaded_images_handler.controllers import uploaded_images_handler
 
 
 # Select logging level for the running instance of the application
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 
 # Define the WSGI application object
 app = Flask(__name__)

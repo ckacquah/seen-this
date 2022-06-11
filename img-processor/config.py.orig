@@ -33,7 +33,5 @@ CSRF_SESSION_KEY = "secret"
 SECRET_KEY = "secret"
 
 # configuration for Celery
-CELERY_CONFIG = {
-    'broker_url': 'pyamqp://root:root@127.0.0.1//',
-    'result_backend': 'redis://127.0.0.1',
-}
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
