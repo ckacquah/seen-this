@@ -37,3 +37,8 @@ CELERY_CONFIG = {
     'broker_url': 'pyamqp://root:root@127.0.0.1//',
     'result_backend': 'redis://127.0.0.1',
 }
+
+# Files upload configuration
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+MAX_CONTENT_LENGTH = 16 * 1024 * 1024

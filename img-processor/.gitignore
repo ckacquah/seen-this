@@ -32,3 +32,4 @@ database.db
 *.dat
 *.bak
 *.dir
+uploads/*

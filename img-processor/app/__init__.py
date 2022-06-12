@@ -15,7 +15,7 @@ from flask_migrate import Migrate
 from app.models import db
 from app.seeders import run_seeds
 from app.tasks import celery
-from app.modules.uploaded_images_handler.controllers import uploaded_images_handler
+from app.modules.image_handler.controllers import image_handler
 
 
 # Select logging level for the running instance of the application
@@ -45,4 +45,4 @@ def not_found(error):
 
 
 # Register blueprint(s)
-app.register_blueprint(uploaded_images_handler)
+app.register_blueprint(image_handler)
