@@ -12,7 +12,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database - we are working with
 # SQLite for this example
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'database.db')
+SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(BASE_DIR, "database.db")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 DATABASE_CONNECT_OPTIONS = {}
 
@@ -34,11 +34,16 @@ SECRET_KEY = "secret"
 
 # configuration for Celery
 CELERY_CONFIG = {
-    'broker_url': 'pyamqp://root:root@127.0.0.1//',
-    'result_backend': 'redis://127.0.0.1',
+    "broker_url": "pyamqp://root:root@127.0.0.1//",
+    "result_backend": "redis://127.0.0.1",
 }
 
 # Files upload configuration
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
+
+# Project Folder directories
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "storage", "uploads")
+SAMPLES_FOLDER = os.path.join(BASE_DIR, "storage", "samples")
+PROCESSED_FOLDER = os.path.join(BASE_DIR, "storage", "processed")
+PROCESSED_FACES_FOLDER = os.path.join(PROCESSED_FOLDER, "faces")

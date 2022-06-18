@@ -1,21 +1,14 @@
 import os
 
-from conftest import db, client, get_sample_image_path, get_sample_file_path
 from app.modules.image_handler.models import File
-
-sample_images = ["01.jpeg", "02.jpeg", "03.jpeg", "04.jpeg", "05.jpeg"]
-
-
-def upload_image(client, image_name):
-    image_path = get_sample_image_path(image_name)
-    with open(image_path, "rb") as img:
-        response = client.post("images/upload", data={"image": (img, image_name)})
-    return response
-
-
-def upload_images(client, images=sample_images):
-    for image in images:
-        upload_image(client, image)
+from conftest import (
+    db,
+    client,
+    upload_image,
+    upload_images,
+    sample_images,
+    get_sample_file_path,
+)
 
 
 def test_images_can_be_uploaded(client):
@@ -62,3 +55,11 @@ def test_images_can_be_retrieved(client):
             File.query.filter_by(name=image["name"], uuid=image["uuid"]).first()
             is not None
         )
+
+
+def test_faces_can_be_extracted_from_image(client):
+    upload_images(client)
+    response = client.post("images/extract-faces")
+    assert response.status_code == 200
+    assert response.json["message"] == "Face extraction started successful"
+    assert response.json["task_id"] is not None

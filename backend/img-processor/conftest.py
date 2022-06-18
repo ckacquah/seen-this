@@ -4,20 +4,34 @@ import logging
 import tempfile
 
 from app import app, db
+from config import SAMPLES_FOLDER
 
 # Remove faker logs during tests
 logger = logging.getLogger("faker")
 logger.setLevel(logging.INFO)
 
-
-samples_folder = os.path.join(app.root_path, "../samples")
+sample_images = ["01.jpeg", "02.jpeg", "03.jpeg", "04.jpeg", "05.jpeg"]
 
 
 def get_sample_image_path(filename):
-    return os.path.join(samples_folder, "images", filename)
+    return os.path.join(SAMPLES_FOLDER, "images", filename)
+
 
 def get_sample_file_path(filename):
-    return os.path.join(samples_folder, "files", filename)
+    return os.path.join(SAMPLES_FOLDER, "files", filename)
+
+
+def upload_image(client, image_name):
+    image_path = get_sample_image_path(image_name)
+    with open(image_path, "rb") as img:
+        response = client.post("images/upload", data={"image": (img, image_name)})
+    return response
+
+
+def upload_images(client, images=sample_images):
+    for image in images:
+        upload_image(client, image)
+
 
 @pytest.fixture
 def image_app():
@@ -34,7 +48,7 @@ def image_app():
     db.create_all()
 
     yield image_app
-    
+
     # teardown test database
     db.drop_all()
     db.session.remove()
