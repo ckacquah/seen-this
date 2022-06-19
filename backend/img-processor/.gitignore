@@ -33,3 +33,5 @@ database.db
 *.bak
 *.dir
 storage/uploads/*
+storage/processed/faces/*
+storage/processed/temp/*

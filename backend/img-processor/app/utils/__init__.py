@@ -1,4 +1,7 @@
 import os
+import random
+import string
+from datetime import datetime
 
 from config import ALLOWED_EXTENSIONS, PROCESSED_FACES_FOLDER, UPLOAD_FOLDER
 
@@ -13,3 +16,13 @@ def get_processed_face_path(filename):
 
 def get_uploaded_file_path(filename):
     return os.path.join(UPLOAD_FOLDER, filename)
+
+
+def generate_random_file_name(size):
+    return (
+        str(datetime.now()).replace(" ", "_").replace(":", "-")
+        + "_"
+        + "".join(
+            random.choice(string.ascii_letters + string.digits) for _ in range(size)
+        )
+    )
