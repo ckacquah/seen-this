@@ -2,7 +2,7 @@ import os
 import cv2
 from retinaface import RetinaFace
 
-from app.tasks import celery
+from app.tasks import celery, flask_app
 from app.modules.image_handler.models import db, File, Face
 from app.utils import (
     get_uploaded_file_path,
@@ -10,16 +10,18 @@ from app.utils import (
     generate_random_file_name,
 )
 
+db.init_app(flask_app)
 
-@celery.task(name="extract-faces-from-image-task")
-def extract_faces_from_image(image_param):
+
+@celery.task(name="extract-faces-from-image-task", bind=True)
+def extract_faces_from_image(self, image_param):
     image_file = File.query.get(image_param["image"])
     image_path = get_uploaded_file_path(image_file.name)
     detected_faces = RetinaFace.detect_faces(image_path).values()
     extracted_faces = extract_faces_as_images(image_path, detected_faces)
     saved_faces = save_extracted_faces_to_storage(extracted_faces)
     save_extracted_faces_to_db(saved_faces, image_file)
-    return {"faces": saved_faces}
+    return str({"faces": saved_faces})
 
 
 def extract_faces_as_images(image_path, detected_faces):

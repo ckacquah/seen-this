@@ -1,11 +1,13 @@
 import os
 import uuid
+from celery.result import AsyncResult
 from flask import Blueprint, jsonify, request
 from werkzeug.utils import secure_filename
 
+
 from config import UPLOAD_FOLDER
-from app.tasks import celery
 from app.utils import allowed_file
+from app.tasks.extract_faces_from_image import extract_faces_from_image, celery
 from app.modules.image_handler.models import File, db, files_schema
 
 image_handler = Blueprint("images", __name__, url_prefix="/images")
@@ -66,16 +68,23 @@ def upload():
 
 @image_handler.route("/extract-faces", methods=["POST"])
 def extract_faces():
-    return jsonify({"message": "Face extraction started successful"}), 200
+    task = extract_faces_from_image.apply_async(
+        args=({"image": request.json["image"], "backend": "retinaface"},)
+    )
+    return (
+        jsonify({"task_id": task.id, "message": "Face extraction started successful"}),
+        200,
+    )
 
 
 @image_handler.route("/task/<task_id>")
 def task(task_id, methods=["GET"]):
-    task_result = celery.AsyncResult(task_id)
+    task_result = AsyncResult(task_id, app=celery)
     return (
         jsonify(
             {
                 "task_id": task_id,
+                "task_state": task_result.state,
                 "task_status": task_result.status,
                 "task_result": task_result.result,
             }

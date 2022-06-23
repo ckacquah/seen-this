@@ -34,8 +34,8 @@ SECRET_KEY = "secret"
 
 # configuration for Celery
 CELERY_CONFIG = {
-    "broker_url": "pyamqp://root:root@127.0.0.1//",
-    "result_backend": "redis://127.0.0.1",
+    "broker_url": "amqp://root:root@127.0.0.1:5672//",
+    "result_backend": "rpc://root:root@127.0.0.1:5672//",
 }
 
 # Files upload configuration

@@ -1,6 +1,7 @@
 import os
 
-from app.modules.image_handler.models import File
+from app.tasks import celery
+from app.modules.image_handler.models import File, Face
 from conftest import (
     db,
     client,
@@ -17,10 +18,7 @@ def test_images_can_be_uploaded(client):
         assert response.status_code == 200
         assert response.json["message"] == "Image uploaded successfully"
         assert response.json["image_name"] == image
-        assert (
-            File.query.filter_by(name=image, uuid=response.json["uuid"]).first()
-            is not None
-        )
+        assert File.query.get(response.json["uuid"]) is not None
 
 
 def test_only_images_can_be_uploaded(client):
@@ -51,15 +49,21 @@ def test_images_can_be_retrieved(client):
     assert len(response.json["images"]) == 5
     for image in response.json["images"]:
         assert image["name"] in sample_images
-        assert (
-            File.query.filter_by(name=image["name"], uuid=image["uuid"]).first()
-            is not None
-        )
+        assert File.query.get(image["uuid"]) is not None
 
 
 def test_faces_can_be_extracted_from_image(client):
-    upload_images(client)
-    response = client.post("images/extract-faces")
+    upload_image(client, "sample.jpg")
+    file = File.query.filter_by(name="sample.jpg").first()
+    response = client.post(
+        "images/extract-faces",
+        data={
+            "image": file.uuid,
+            "backend": "retinaface",
+        },
+    )
     assert response.status_code == 200
     assert response.json["message"] == "Face extraction started successful"
     assert response.json["task_id"] is not None
+    task_result = celery.AsyncResult(response.json["task_id"])
+    assert task_result.status == "SUCCESS" or task_result.status == "STARTED"
