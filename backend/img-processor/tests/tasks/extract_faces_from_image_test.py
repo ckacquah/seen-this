@@ -1,18 +1,18 @@
 import os
 import cv2
+import json
 import pytest
 
-from conftest import get_sample_image_path
+from conftest import client
 from app.modules.image_handler.models import File, Face
 from app.utils import get_processed_face_path
+from app.utils.testing import upload_image, get_sample_image_path
 from app.tasks.extract_faces_from_image import (
     extract_faces_as_images,
     extract_faces_from_image,
     save_extracted_faces_to_db,
     save_extracted_faces_to_storage,
 )
-
-from conftest import client, upload_image
 
 
 SAMPLE_FACES = [
@@ -47,6 +47,7 @@ def test_extract_faces_from_image_task(client):
             },
         ),
     ).get()
+    results = json.loads(results)
     assert results is not None
     assert results["faces"] is not None
     assert len(results["faces"]) == 5
@@ -57,7 +58,7 @@ def test_extract_faces_from_image_task(client):
         assert face.parent.uuid == file.uuid
 
 
-def test_extract_faces_as_images():
+def test_extract_faces_as_images(client):
     extract_faces = extract_faces_as_images(
         get_sample_image_path("sample.jpg"), SAMPLE_FACES
     )
@@ -73,7 +74,7 @@ def test_extract_faces_as_images():
         assert image_height == facial_area[3] - facial_area[1]
 
 
-def test_save_extracted_faces_to_storage():
+def test_save_extracted_faces_to_storage(client):
     extracted_faces = extract_faces_as_images(
         get_sample_image_path("sample.jpg"), SAMPLE_FACES
     )

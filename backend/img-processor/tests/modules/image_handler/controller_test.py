@@ -1,10 +1,11 @@
 import os
+import pytest
+
+from conftest import db, client
 
 from app.tasks import celery
 from app.modules.image_handler.models import File, Face
-from conftest import (
-    db,
-    client,
+from app.utils.testing import (
     upload_image,
     upload_images,
     sample_images,
@@ -52,9 +53,11 @@ def test_images_can_be_retrieved(client):
         assert File.query.get(image["uuid"]) is not None
 
 
+@pytest.fixture()
 def test_faces_can_be_extracted_from_image(client):
     upload_image(client, "sample.jpg")
     file = File.query.filter_by(name="sample.jpg").first()
+    assert file is not None
     response = client.post(
         "images/extract-faces",
         data={
