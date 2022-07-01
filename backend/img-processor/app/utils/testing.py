@@ -34,8 +34,3 @@ def upload_image(client, image_name):
 def upload_images(client, images=sample_images):
     for image in images:
         upload_image(client, image)
-
-
-def upload_images(client, images=sample_images):
-    for image in images:
-        upload_image(client, image)
