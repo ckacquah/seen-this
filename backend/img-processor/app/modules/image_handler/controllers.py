@@ -79,7 +79,6 @@ def extract_faces():
 @image_handler.route("/task/<task_id>")
 def task(task_id, methods=["GET"]):
     task_result = extract_faces_from_image.AsyncResult(task_id)
-    print(task_result)
     return (
         jsonify(
             {
