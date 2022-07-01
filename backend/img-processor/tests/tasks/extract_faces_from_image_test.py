@@ -47,7 +47,6 @@ def test_extract_faces_from_image_task(client):
             },
         ),
     ).get()
-    results = json.loads(results)
     assert results is not None
     assert results["faces"] is not None
     assert len(results["faces"]) == 5

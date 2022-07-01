@@ -12,7 +12,6 @@ logger.setLevel(logging.INFO)
 
 @pytest.fixture()
 def app():
-    delete_all_processed_faces_on_disk()
     app = create_app(config=TestingConfig())
     # setup test app context
     with app.app_context():
@@ -22,6 +21,8 @@ def app():
         # teardown test database
         db.session.remove()
         db.drop_all()
+
+    delete_all_processed_faces_on_disk()
 
 
 @pytest.fixture()
