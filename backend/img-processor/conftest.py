@@ -44,9 +44,9 @@ def upload_images(client, images=sample_images):
 
 @pytest.fixture
 def image_app():
-    # setup test app context
     delete_all_processed_faces_on_disk()
 
+    # setup test app context
     with app.app_context():
         # setup test database
         db.create_all()
@@ -54,8 +54,8 @@ def image_app():
         yield image_app
 
         # teardown test database
-        db.drop_all()
         db.session.remove()
+        db.drop_all()
 
 
 @pytest.fixture()
