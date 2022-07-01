@@ -5,6 +5,7 @@ from app.config.development import DevelopmentConfig
 
 def get_config(env):
     if env == "development":
+        print("Using development config")
         return DevelopmentConfig()
     elif env == "production":
         return ProductionConfig()

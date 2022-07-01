@@ -12,6 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 # Import app models & blueprints
+from config import config
 from app.tasks import celery
 from app.models import db, ma
 from app.seeders import run_seeds
@@ -25,7 +26,7 @@ logging.basicConfig(level=logging.DEBUG)
 app = Flask(__name__)
 
 # Configurations
-app.config.from_object("config")
+app.config.from_object(config)
 
 # Handling database ORM
 db.init_app(app)
