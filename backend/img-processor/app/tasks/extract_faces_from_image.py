@@ -20,7 +20,7 @@ def extract_faces_from_image(self, image_param):
     extracted_faces = extract_faces_as_images(image_path, detected_faces)
     saved_faces = save_extracted_faces_to_storage(extracted_faces)
     faces = save_extracted_faces_to_db(saved_faces, image_file)
-    return str(json.dumps({"faces": faces}))
+    return {"faces": faces}
 
 
 def extract_faces_as_images(image_path, detected_faces):
