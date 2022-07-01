@@ -4,7 +4,10 @@ import logging
 import tempfile
 
 from app import app, db
-from config import SAMPLES_FOLDER, PROCESSED_FACES_FOLDER
+from config import config
+
+SAMPLES_FOLDER = config.SAMPLES_FOLDER
+PROCESSED_FACES_FOLDER = config.PROCESSED_FACES_FOLDER
 
 # Remove faker logs during tests
 logger = logging.getLogger("faker")
@@ -41,26 +44,18 @@ def upload_images(client, images=sample_images):
 
 @pytest.fixture
 def image_app():
-    app.config.update(
-        {
-            "TESTING": True,
-            "SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
-        }
-    )
     # setup test app context
-    ctx = app.app_context()
-    ctx.push()
-    # setup test database
-    db.create_all()
     delete_all_processed_faces_on_disk()
 
-    yield image_app
+    with app.app_context():
+        # setup test database
+        db.create_all()
 
-    # teardown test database
-    db.drop_all()
-    db.session.remove()
-    # remove test app context
-    ctx.pop()
+        yield image_app
+
+        # teardown test database
+        db.drop_all()
+        db.session.remove()
 
 
 @pytest.fixture()

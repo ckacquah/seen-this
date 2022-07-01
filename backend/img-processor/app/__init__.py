@@ -12,9 +12,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 # Import app models & blueprints
+from app.tasks import celery
 from app.models import db, ma
 from app.seeders import run_seeds
-from app.tasks import celery
 from app.modules.image_handler.controllers import image_handler
 
 

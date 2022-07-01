@@ -10,8 +10,6 @@ from app.utils import (
     generate_random_file_name,
 )
 
-db.init_app(flask_app)
-
 
 @celery.task(name="extract-faces-from-image-task", bind=True)
 def extract_faces_from_image(self, image_param):

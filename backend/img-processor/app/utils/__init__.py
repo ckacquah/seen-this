@@ -3,7 +3,11 @@ import random
 import string
 from datetime import datetime
 
-from config import ALLOWED_EXTENSIONS, PROCESSED_FACES_FOLDER, UPLOAD_FOLDER
+from config import config
+
+UPLOAD_FOLDER = config.UPLOAD_FOLDER
+ALLOWED_EXTENSIONS = config.ALLOWED_EXTENSIONS
+PROCESSED_FACES_FOLDER = config.PROCESSED_FACES_FOLDER
 
 
 def allowed_file(filename):
