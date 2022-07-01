@@ -11,8 +11,10 @@ from flask_sqlalchemy import SQLAlchemy
 # Import Flask Migrate
 from flask_migrate import Migrate
 
-# Import app models & blueprints
+# App Configuration
 from config import config
+
+# Import app models & blueprints
 from app.tasks import celery
 from app.models import db, ma
 from app.seeders import run_seeds
