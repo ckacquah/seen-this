@@ -12,7 +12,7 @@ from app.utils import (
 )
 
 
-@celery.task(name="extract-faces-from-image-task", bind=True)
+@celery.task(name="extract-faces-from-image", bind=True)
 def extract_faces_from_image(self, image_param):
     image_file = File.query.get(image_param["image"])
     image_path = get_uploaded_file_path(image_file.name)
