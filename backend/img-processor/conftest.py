@@ -2,8 +2,11 @@ import pytest
 import logging
 
 from app import create_app, db
-from app.config.testing import TestingConfig
-from app.utils.testing import delete_all_processed_faces_on_disk
+from app.utils.testing import (
+    config,
+    delete_uploaded_files,
+    delete_processed_files,
+)
 
 # Remove faker logs during tests
 logger = logging.getLogger("faker")
@@ -12,7 +15,7 @@ logger.setLevel(logging.INFO)
 
 @pytest.fixture()
 def app():
-    app = create_app(config=TestingConfig())
+    app = create_app(config=config)
     # setup test app context
     with app.app_context():
         # setup test database
@@ -22,7 +25,8 @@ def app():
         db.session.remove()
         db.drop_all()
 
-    delete_all_processed_faces_on_disk()
+    delete_uploaded_files()
+    delete_processed_files()
 
 
 @pytest.fixture()
