@@ -1,4 +1,4 @@
-from app.models import BaseModel, db, ma
+from app.base_model import BaseModel, db, ma
 
 
 class File(BaseModel):

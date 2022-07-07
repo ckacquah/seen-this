@@ -14,8 +14,8 @@ from config import config
 
 # Import app models & blueprints
 from app.tasks import celery
-from app.models import db, ma
 from app.seeders import run_seeds
+from app.base_model import db, ma
 from app.modules.image.controllers import image_handler
 
 
