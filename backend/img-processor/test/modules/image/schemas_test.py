@@ -1,7 +1,7 @@
 import pytest
 
 from marshmallow import Schema, fields, ValidationError
-from app.modules.image_handler.schemas import ExtractFacesFromImagesRequestSchema
+from app.modules.image.schemas import ExtractFacesFromImagesRequestSchema
 
 
 def test_valid_extract_faces_from_image_request_schema():

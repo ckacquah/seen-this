@@ -4,7 +4,7 @@ import pytest
 from conftest import db, client
 
 from app.tasks import celery
-from app.modules.image_handler.models import File, Face
+from app.modules.image.models import File, Face
 from app.utils.testing import (
     upload_image,
     upload_images,

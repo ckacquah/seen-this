@@ -16,7 +16,7 @@ from config import config
 from app.tasks import celery
 from app.models import db, ma
 from app.seeders import run_seeds
-from app.modules.image_handler.controllers import image_handler
+from app.modules.image.controllers import image_handler
 
 
 # Select logging level for the running instance of the application

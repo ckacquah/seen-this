@@ -1,7 +1,7 @@
 from faker import Faker
 
 from app.models import db
-from app.modules.image_handler.models import File
+from app.modules.image.models import File
 
 fake = Faker()
 

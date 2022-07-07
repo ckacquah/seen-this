@@ -4,7 +4,7 @@ import json
 import pytest
 
 from conftest import client
-from app.modules.image_handler.models import File, Face
+from app.modules.image.models import File, Face
 from app.utils import get_processed_face_path
 from app.utils.testing import upload_image, get_sample_image_path
 from app.tasks.extract_faces_from_image import (

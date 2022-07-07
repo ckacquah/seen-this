@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from config import config
 from app.utils import allowed_file
 from app.tasks.extract_faces_from_image import extract_faces_from_image, celery
-from app.modules.image_handler.models import File, db, files_schema
+from app.modules.image.models import File, db, files_schema
 
 UPLOAD_FOLDER = config.UPLOAD_FOLDER
 CELERY_CONFIG = config.CELERY_CONFIG

@@ -4,7 +4,7 @@ import json
 from retinaface import RetinaFace
 
 from app.tasks import celery, flask_app
-from app.modules.image_handler.models import db, File, Face, faces_schema
+from app.modules.image.models import db, File, Face, faces_schema
 from app.utils import (
     get_uploaded_file_path,
     get_processed_face_path,
