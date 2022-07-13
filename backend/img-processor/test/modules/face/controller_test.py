@@ -19,3 +19,9 @@ def test_get_all_faces_returns_faces_stored_in_db(client):
         assert face_in_db is not None
         assert face_in_reponse is not None
         assert face_schema.dump(face_in_db) == face_in_reponse
+
+
+def test_get_all_faces_returns_nothing_if_db_is_empty(client):
+    response = client.get("face/")
+    assert response.status_code == 200
+    assert len(response.json) == 0
