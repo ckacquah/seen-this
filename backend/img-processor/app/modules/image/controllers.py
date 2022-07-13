@@ -12,10 +12,10 @@ from app.modules.image.models import File, db, files_schema
 UPLOAD_FOLDER = config.UPLOAD_FOLDER
 CELERY_CONFIG = config.CELERY_CONFIG
 
-image_handler = Blueprint("images", __name__, url_prefix="/images")
+image_controller = Blueprint("images", __name__, url_prefix="/images")
 
 
-@image_handler.route("/")
+@image_controller.route("/")
 def index():
     images = File.query.all()
     return (
@@ -29,7 +29,7 @@ def index():
     )
 
 
-@image_handler.route("/upload", methods=["POST"])
+@image_controller.route("/upload", methods=["POST"])
 def upload():
     if "image" not in request.files:
         return jsonify({"message": "No image file part"}), 400
@@ -68,7 +68,7 @@ def upload():
     )
 
 
-@image_handler.route("/extract-faces", methods=["POST"])
+@image_controller.route("/extract-faces", methods=["POST"])
 def extract_faces():
     task = extract_faces_from_image.apply_async(
         args=({"image": request.json["image"], "backend": "retinaface"},)
@@ -79,7 +79,7 @@ def extract_faces():
     )
 
 
-@image_handler.route("/task/<task_id>")
+@image_controller.route("/task/<task_id>")
 def task(task_id, methods=["GET"]):
     task_result = extract_faces_from_image.AsyncResult(task_id)
     return (

@@ -16,7 +16,7 @@ from config import config
 from app.tasks import celery
 from app.seeders import run_seeds
 from app.base_model import db, ma
-from app.modules.image.controllers import image_handler
+from app.modules.image.controllers import image_controller
 
 
 # Select logging level for the running instance of the application
@@ -48,7 +48,7 @@ def create_app(config=config):
         return {"message": "Not found"}, 404
 
     # Register blueprint(s)
-    app.register_blueprint(image_handler)
+    app.register_blueprint(image_controller)
 
     return app
 
