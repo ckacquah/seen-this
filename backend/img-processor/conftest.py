@@ -9,6 +9,11 @@ from app.utils.testing import (
 )
 
 
+# Remove faker logs during tests
+logger = logging.getLogger("faker")
+logger.setLevel(logging.INFO)
+
+
 @pytest.fixture()
 def app():
     app = create_app(config=config)
