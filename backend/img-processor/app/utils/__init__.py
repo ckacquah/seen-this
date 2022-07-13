@@ -1,4 +1,5 @@
 import os
+import uuid
 import random
 import string
 from datetime import datetime
@@ -20,6 +21,10 @@ def get_processed_face_path(filename):
 
 def get_uploaded_file_path(filename):
     return os.path.join(UPLOAD_FOLDER, filename)
+
+
+def generate_uuid():
+    return str(uuid.uuid4())
 
 
 def generate_random_file_name(size):

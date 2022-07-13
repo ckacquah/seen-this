@@ -1,15 +1,11 @@
 import datetime
-import uuid
 
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from app.utils import generate_uuid
 
 db = SQLAlchemy()
 ma = Marshmallow()
-
-
-def generate_uuid():
-    return str(uuid.uuid4())
 
 
 class BaseModel(db.Model):
