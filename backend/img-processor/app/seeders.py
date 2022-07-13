@@ -23,7 +23,7 @@ def run_image_seeder():
             source="upload",
             storage_name=generate_random_file_name(),
         )
-        images.append(image.name)
+        images.append(image.storage_name)
         logger.info(f"{image} created")
     db.session.add_all(images)
     db.session.commit()
