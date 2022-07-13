@@ -6,7 +6,7 @@ from conftest import client
 
 from app.seeders import run_image_seeder
 from app.modules.image.models import Image
-from app.modules.image.schemas import image_schema
+from app.modules.image.schemas import images_schema
 
 
 def test_get_all_images_returns_images_stored_in_db(client):
@@ -15,10 +15,7 @@ def test_get_all_images_returns_images_stored_in_db(client):
     assert response.status_code == 200
     assert len(response.json) == 5
     assert len(Image.query.all()) == 5
-    for image_in_db, image_in_reponse in zip(Image.query.all(), response.json):
-        assert image_in_db is not None
-        assert image_in_reponse is not None
-        assert image_schema.dump(image_in_db) == image_in_reponse
+    assert images_schema.dump(Image.query.all()) == response.json
 
 
 def test_get_all_images_returns_nothing_if_db_is_empty(client):
