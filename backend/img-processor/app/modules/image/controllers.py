@@ -15,7 +15,7 @@ CELERY_CONFIG = config.CELERY_CONFIG
 image_controller = Blueprint("images", __name__, url_prefix="/images")
 
 
-@image_controller.route("/")
+@image_controller.route("/", methods=["GET"])
 def index():
     images = File.query.all()
     return (
@@ -79,8 +79,8 @@ def extract_faces():
     )
 
 
-@image_controller.route("/task/<task_id>")
-def task(task_id, methods=["GET"]):
+@image_controller.route("/task/<task_id>", methods=["GET"])
+def task(task_id):
     task_result = extract_faces_from_image.AsyncResult(task_id)
     return (
         jsonify(
