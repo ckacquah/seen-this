@@ -1,11 +1,20 @@
-from marshmallow import Schema, fields, validate
+from app.base_model import ma
 
 
-class ExtractFacesFromImagesRequestSchema(Schema):
-    backend = fields.Str(
-        validate=validate.OneOf(
-            ["opencv", "ssd", "dlib", "mtcnn", "retinaface", "mediapipe"]
-        ),
-        required=True,
-    )
-    targets = fields.List(fields.Str, required=True)
+class ImageSchema(ma.Schema):
+    class Meta:
+        fields = (
+            "uuid",
+            "name",
+            "size",
+            "width",
+            "height",
+            "source",
+            "storage_name",
+            "created_at",
+            "updated_at",
+        )
+
+
+image_schema = ImageSchema()
+images_schema = ImageSchema(many=True)

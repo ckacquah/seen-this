@@ -1,72 +1,26 @@
 import os
 import pytest
 
-from conftest import db, client
+from conftest import client
 
-from app.tasks import celery
-from app.modules.image.models import File, Face
-from app.utils.testing import (
-    upload_image,
-    upload_images,
-    sample_images,
-    get_sample_file_path,
-)
+from app.seeders import run_image_seeder
+from app.modules.image.models import Image
+from app.modules.image.schemas import image_schema
 
 
-def test_images_can_be_uploaded(client):
-    for image in sample_images:
-        response = upload_image(client, image)
-        assert response.status_code == 200
-        assert response.json["message"] == "Image uploaded successfully"
-        assert response.json["image_name"] == image
-        assert File.query.get(response.json["uuid"]) is not None
-
-
-def test_only_images_can_be_uploaded(client):
-    file = get_sample_file_path("sample.txt")
-    with open(file, "rb") as f:
-        response = client.post("images/upload", data={"image": (f, "sample.txt")})
-    assert response.status_code == 400
-    assert response.json["message"] == "Only images can be uploaded"
-
-
-def test_image_cannot_be_empty(client):
-    response = client.post("images/upload", data={"image": (None, "")})
-    assert response.status_code == 400
-    assert response.json["message"] == "Image cannot be empty"
-
-
-def test_image_part_cannot_be_empty(client):
-    response = client.post("images/upload", data={})
-    assert response.status_code == 400
-    assert response.json["message"] == "No image file part"
-
-
-def test_images_can_be_retrieved(client):
-    upload_images(client)
-    response = client.get("images/")
+def test_get_all_images_returns_images_stored_in_db(client):
+    run_image_seeder()
+    response = client.get("image/")
     assert response.status_code == 200
-    assert response.json["message"] == "Images retrieved successfully"
-    assert len(response.json["images"]) == 5
-    for image in response.json["images"]:
-        assert image["name"] in sample_images
-        assert File.query.get(image["uuid"]) is not None
+    assert len(response.json) == 5
+    assert len(Image.query.all()) == 5
+    for image_in_db, image_in_reponse in zip(Image.query.all(), response.json):
+        assert image_in_db is not None
+        assert image_in_reponse is not None
+        assert image_schema.dump(image_in_db) == image_in_reponse
 
 
-@pytest.fixture()
-def test_faces_can_be_extracted_from_image(client):
-    upload_image(client, "sample.jpg")
-    file = File.query.filter_by(name="sample.jpg").first()
-    assert file is not None
-    response = client.post(
-        "images/extract-faces",
-        data={
-            "image": file.uuid,
-            "backend": "retinaface",
-        },
-    )
+def test_get_all_images_returns_nothing_if_db_is_empty(client):
+    response = client.get("image/")
     assert response.status_code == 200
-    assert response.json["message"] == "Face extraction started successful"
-    assert response.json["task_id"] is not None
-    task_result = celery.AsyncResult(response.json["task_id"])
-    assert task_result.status == "SUCCESS" or task_result.status == "STARTED"
+    assert len(response.json) == 0

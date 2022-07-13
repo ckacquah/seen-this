@@ -4,7 +4,7 @@ import json
 from retinaface import RetinaFace
 
 from app.tasks import celery, flask_app
-from app.modules.image.models import db, File, Face, faces_schema
+from app.modules.image.models import db, Image
 from app.utils import (
     get_uploaded_file_path,
     get_processed_face_path,
@@ -19,8 +19,8 @@ def extract_faces_from_image(self, image_param):
     detected_faces = RetinaFace.detect_faces(image_path).values()
     extracted_faces = extract_faces_as_images(image_path, detected_faces)
     saved_faces = save_extracted_faces_to_storage(extracted_faces)
-    faces = save_extracted_faces_to_db(saved_faces, image_file)
-    return {"faces": faces}
+    # faces = save_extracted_faces_to_db(saved_faces, image_file)
+    # return {"faces": faces}
 
 
 def extract_faces_as_images(image_path, detected_faces):
@@ -54,12 +54,12 @@ def save_extracted_faces_to_storage(extracted_faces):
     return saved_faces
 
 
-def save_extracted_faces_to_db(saved_faces, parent):
-    files, faces = [], []
-    for face in saved_faces:
-        image_path = get_processed_face_path(face["file_name"])
-        files.append(File(name=face["file_name"], size=os.path.getsize(image_path)))
-        faces.append(Face(file=files[-1], parent=parent, score=face["score"]))
-    db.session.add_all(files + faces)
-    db.session.commit()
-    return faces_schema.dump(faces)
+# def save_extracted_faces_to_db(saved_faces, parent):
+#     files, faces = [], []
+#     for face in saved_faces:
+#         image_path = get_processed_face_path(face["file_name"])
+#         files.append(File(name=face["file_name"], size=os.path.getsize(image_path)))
+#         faces.append(Face(file=files[-1], parent=parent, score=face["score"]))
+#     db.session.add_all(files + faces)
+#     db.session.commit()
+#     return faces_schema.dump(faces)

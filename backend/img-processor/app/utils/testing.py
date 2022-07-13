@@ -35,7 +35,7 @@ def get_sample_file_path(filename):
 def upload_image(client, image_name):
     image_path = get_sample_image_path(image_name)
     with open(image_path, "rb") as img:
-        response = client.post("images/upload", data={"image": (img, image_name)})
+        response = client.post("image/upload", data={"image": (img, image_name)})
     return response
 
 

@@ -4,13 +4,13 @@ import json
 import pytest
 
 from conftest import client
-from app.modules.image.models import File, Face
+from app.modules.image.models import Image
 from app.utils import get_processed_face_path
 from app.utils.testing import upload_image, get_sample_image_path
 from app.tasks.extract_faces_from_image import (
     extract_faces_as_images,
     extract_faces_from_image,
-    save_extracted_faces_to_db,
+    # save_extracted_faces_to_db,
     save_extracted_faces_to_storage,
 )
 
