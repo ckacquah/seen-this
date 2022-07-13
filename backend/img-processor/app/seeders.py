@@ -39,7 +39,6 @@ def generate_factory_facial_areas(count=1):
 
 def run_image_seeder():
     logger.info("Running image seeder...")
-    logger.info(FacialArea().__tablename__)
     db.session.add_all(generate_factory_images(5))
     db.session.commit()
     logger.info("Image seeder has completed")
