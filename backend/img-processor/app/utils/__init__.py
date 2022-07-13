@@ -1,7 +1,5 @@
 import os
 import uuid
-import random
-import string
 from datetime import datetime
 
 from config import config
@@ -27,11 +25,7 @@ def generate_uuid():
     return str(uuid.uuid4())
 
 
-def generate_random_file_name(size):
+def generate_random_file_name():
     return (
-        str(datetime.now()).replace(" ", "_").replace(":", "-")
-        + "_"
-        + "".join(
-            random.choice(string.ascii_letters + string.digits) for _ in range(size)
-        )
+        str(datetime.now()).replace(" ", "_").replace(":", "-") + "_" + generate_uuid()
     )
