@@ -8,10 +8,6 @@ from app.utils.testing import (
     delete_processed_files,
 )
 
-# Remove faker logs during tests
-logger = logging.getLogger("faker")
-logger.setLevel(logging.INFO)
-
 
 @pytest.fixture()
 def app():
