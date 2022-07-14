@@ -59,7 +59,6 @@ def run_face_seeder():
                 facial_area=facial_areas[i],
             )
         )
-    logger.info("Writing to db...")
     db.session.add_all(files + parents + facial_areas + faces)
     db.session.commit()
     logger.info("Face seeder has completed")
