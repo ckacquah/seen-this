@@ -5,7 +5,7 @@ from conftest import client
 
 from app.seeders import run_image_seeder
 from app.modules.image.models import Image
-from app.modules.image.schemas import images_schema
+from app.modules.image.schemas import images_schema, image_schema
 
 
 def test_get_all_images_returns_images_stored_in_db(client):

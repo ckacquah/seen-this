@@ -5,7 +5,7 @@ from conftest import client
 
 from app.seeders import run_face_seeder
 from app.modules.face.models import Face
-from app.modules.face.schemas import faces_schema
+from app.modules.face.schemas import faces_schema, face_schema
 
 
 def test_get_all_faces_returns_faces_stored_in_db(client):
