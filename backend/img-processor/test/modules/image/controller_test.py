@@ -4,6 +4,7 @@ import pytest
 from conftest import client
 
 from app.seeders import run_image_seeder, run_face_seeder
+from app.utils.testing import upload_image, sample_images, get_sample_file_path
 from app.modules.face.models import Face
 from app.modules.image.models import Image
 from app.modules.face.schemas import faces_schema, face_schema
@@ -68,3 +69,25 @@ def test_get_faces_extracted_by_image_returns_404_if_image_does_not_exist(client
     response = client.get(f"image/{str(uuid.uuid4())}/faces")
     assert response.status_code == 404
     assert response.json["message"] == "Image not found"
+
+
+def test_upload_image(client):
+    image = sample_images[0]
+    response = upload_image(client, image)
+    assert response.status_code == 201
+    assert response.json["name"] == image
+    assert image_schema.dump(Image.query.get(response.json["uuid"])) == response.json
+
+
+def test_upload_image_returns_400_when_uploaded_file_is_not_a_valid_image(client):
+    sample_text_file = get_sample_file_path("sample.txt")
+    with open(sample_text_file, "rb") as f:
+        response = client.post("image/upload", data={"image": (f, "sample.txt")})
+    assert response.status_code == 400
+    assert response.json["message"] == "Failed to upload image"
+
+
+def test_upload_image_returns_400_when_no_file_was_uploaded(client):
+    response = client.post("image/upload", data={})
+    assert response.status_code == 400
+    assert response.json["message"] == "Failed to upload image"
