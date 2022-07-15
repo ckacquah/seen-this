@@ -3,8 +3,10 @@ import pytest
 
 from conftest import client
 
-from app.seeders import run_image_seeder
+from app.seeders import run_image_seeder, run_face_seeder
+from app.modules.face.models import Face
 from app.modules.image.models import Image
+from app.modules.face.schemas import faces_schema, face_schema
 from app.modules.image.schemas import images_schema, image_schema
 
 
@@ -48,5 +50,21 @@ def test_delete_image_by_id(client):
 
 def test_delete_image_by_id_returns_404_if_image_does_not_exist(client):
     response = client.delete(f"image/{str(uuid.uuid4())}")
+    assert response.status_code == 404
+    assert response.json["message"] == "Image not found"
+
+
+def test_get_faces_extracted_by_image(client):
+    run_face_seeder()
+    for image in Image.query.all():
+        response = client.get(f"image/{image.uuid}/faces")
+        assert response.status_code == 200
+        assert response.json == faces_schema.dump(
+            Face.query.filter_by(parent_uuid=image.uuid)
+        )
+
+
+def test_get_faces_extracted_by_image_returns_404_if_image_does_not_exist(client):
+    response = client.get(f"image/{str(uuid.uuid4())}/faces")
     assert response.status_code == 404
     assert response.json["message"] == "Image not found"
