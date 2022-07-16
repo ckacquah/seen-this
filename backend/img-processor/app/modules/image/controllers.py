@@ -58,4 +58,4 @@ def download_image(filename):
     uploaded_image_path = get_uploaded_file_path(filename)
     if os.path.exists(uploaded_image_path):
         return send_file(uploaded_image_path)
-    return {"message": "Image not found"}, 404
+    return jsonify({"message": "Image not found"}), 404
