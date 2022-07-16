@@ -47,6 +47,7 @@ def test_delete_image_by_id(client):
         response = client.delete(f"image/{str(image.uuid)}")
         assert response.status_code == 200
         assert len(Image.query.all()) == 5 - index - 1
+        assert Image.query.get(image.uuid) is None
         assert response.json["message"] == "Image has been deleted successfully"
 
 

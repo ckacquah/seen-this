@@ -43,6 +43,7 @@ def test_delete_face_by_id(client):
         response = client.delete(f"face/{str(face.uuid)}")
         assert response.status_code == 200
         assert len(Face.query.all()) == 5 - index - 1
+        assert Face.query.get(face.uuid) is None
         assert response.json["message"] == "Face has been deleted successfully"
 
 
