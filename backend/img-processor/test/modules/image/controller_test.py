@@ -1,4 +1,3 @@
-import io
 import uuid
 import pytest
 
@@ -102,9 +101,9 @@ def test_download_uploaded_image(client):
     image = Image.query.filter_by(storage_name=uploaded_image["storage_name"]).first()
     assert image is not None
     with open(get_uploaded_file_path(image.storage_name), "rb") as img:
-        img_bytes_io = io.BytesIO(img.read())
-    assert response.data == img_bytes_io.read()
+        img_content = img.read()
     assert response.content_type == "image/jpeg"
+    assert response.data == img_content
 
 
 def test_download_uploaded_image_returns_404_when_file_is_not_found(client):
