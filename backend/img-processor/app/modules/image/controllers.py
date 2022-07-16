@@ -1,7 +1,9 @@
-from flask import Blueprint, jsonify, request
+import os
+
+from flask import Blueprint, jsonify, request, send_file
 
 from app.base_model import db
-
+from app.utils import get_uploaded_file_path
 from app.modules.face.models import Face
 from app.modules.face.schemas import faces_schema, face_schema
 from app.modules.image.models import Image
@@ -49,3 +51,11 @@ def upload_image():
         if results is not None:
             return jsonify(results), 201
     return jsonify({"message": "Failed to upload image"}), 400
+
+
+@image_controller.route("/download/<filename>", methods=["GET"])
+def download_image(filename):
+    uploaded_image_path = get_uploaded_file_path(filename)
+    if os.path.exists(uploaded_image_path):
+        return send_file(uploaded_image_path)
+    return {"message": "Image not found"}, 404

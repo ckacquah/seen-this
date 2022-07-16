@@ -1,9 +1,11 @@
+import io
 import uuid
 import pytest
 
 from conftest import client
 
 from app.seeders import run_image_seeder, run_face_seeder
+from app.utils import get_uploaded_file_path
 from app.utils.testing import upload_image, sample_images, get_sample_file_path
 from app.modules.face.models import Face
 from app.modules.image.models import Image
@@ -91,3 +93,22 @@ def test_upload_image_returns_400_when_no_file_was_uploaded(client):
     response = client.post("image/upload", data={})
     assert response.status_code == 400
     assert response.json["message"] == "Failed to upload image"
+
+
+def test_download_uploaded_image(client):
+    uploaded_image = upload_image(client, sample_images[0]).json
+    response = client.get(f"image/download/{uploaded_image['storage_name']}")
+    assert response.status_code == 200
+    image = Image.query.filter_by(storage_name=uploaded_image["storage_name"]).first()
+    assert image is not None
+    with open(get_uploaded_file_path(image.storage_name), "rb") as img:
+        img_bytes_io = io.BytesIO(img.read())
+    assert response.data == img_bytes_io.read()
+    assert response.content_type == "image/jpeg"
+
+
+def test_download_uploaded_image_returns_404_when_file_is_not_found(client):
+    response = client.get(f"image/download/01.jpg")
+    assert response.status_code == 404
+    assert response.content_type == "application/json"
+    assert response.json["message"] == "Image not found"
