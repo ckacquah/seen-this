@@ -98,11 +98,11 @@ def test_download_uploaded_image(client):
     uploaded_image = upload_image(client, sample_images[0]).json
     response = client.get(f"image/download/{uploaded_image['storage_name']}")
     assert response.status_code == 200
+    assert response.content_type == "image/jpeg"
     image = Image.query.filter_by(storage_name=uploaded_image["storage_name"]).first()
     assert image is not None
     with open(get_uploaded_file_path(image.storage_name), "rb") as img:
         img_content = img.read()
-    assert response.content_type == "image/jpeg"
     assert response.data == img_content
 
 
