@@ -4,13 +4,14 @@ import json
 import pytest
 
 from conftest import client
+from app.modules.face.models import Face
 from app.modules.image.models import Image
 from app.utils import get_processed_face_path
 from app.utils.testing import upload_image, get_sample_image_path
 from app.tasks.extract_faces_from_image import (
     extract_faces_as_images,
     extract_faces_from_image,
-    # save_extracted_faces_to_db,
+    save_extracted_faces_to_db,
     save_extracted_faces_to_storage,
 )
 
@@ -37,12 +38,11 @@ SAMPLE_FACES = [
 
 def test_extract_faces_from_image_task(client):
     upload_image(client, "sample.jpg")
-    file = File.query.filter_by(name="sample.jpg").first()
-    assert extract_faces_from_image.apply(args=({},)) is not None
+    image = Image.query.first()
     results = extract_faces_from_image.apply(
         args=(
             {
-                "image": file.uuid,
+                "image": image.uuid,
                 "backend": "opencv",
             },
         ),
@@ -50,11 +50,11 @@ def test_extract_faces_from_image_task(client):
     assert results is not None
     assert results["faces"] is not None
     assert len(results["faces"]) == 5
-    assert len(File.query.all()) == 6
+    assert len(Image.query.all()) == 6
     assert len(Face.query.all()) == 5
     for face in Face.query.all():
         assert face.file is not None
-        assert face.parent.uuid == file.uuid
+        assert face.parent.uuid == image.uuid
 
 
 def test_extract_faces_as_images(client):
@@ -92,17 +92,17 @@ def test_save_extracted_faces_to_storage(client):
 
 def test_save_extracted_faces_to_db(client):
     upload_image(client, "sample.jpg")
-    file = File.query.filter_by(name="sample.jpg").first()
+    image = Image.query.filter_by(name="sample.jpg").first()
     extracted_faces = extract_faces_as_images(
         get_sample_image_path("sample.jpg"), SAMPLE_FACES
     )
     saved_faces = save_extracted_faces_to_storage(extracted_faces)
-    save_extracted_faces_to_db(saved_faces, parent=file)
-    assert len(File.query.all()) == 5
+    save_extracted_faces_to_db(saved_faces, parent=image)
+    assert len(Image.query.all()) == 5
     assert len(Face.query.all()) == 4
     for face in Face.query.all():
         assert face.file is not None
         assert face.parent is not None
-        assert File.query.get(face.file.uuid) is not None
-        assert File.query.get(face.parent.uuid) is not None
-        assert face.parent.uuid == file.uuid
+        assert Image.query.get(face.file.uuid) is not None
+        assert Image.query.get(face.parent.uuid) is not None
+        assert face.parent.uuid == image.uuid
