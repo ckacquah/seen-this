@@ -3,7 +3,7 @@ import io
 import PIL
 
 from app.base_model import db
-from app.utils import generate_random_file_name, get_uploaded_file_path, allowed_file
+from app.utils import generate_random_filename, get_uploaded_file_path, allowed_file
 from app.modules.image.models import Image
 from app.modules.image.schemas import image_schema
 
@@ -11,7 +11,7 @@ from app.modules.image.schemas import image_schema
 def save_uploaded_image(name, content):
     try:
         image = PIL.Image.open(io.BytesIO(content))
-        storage_name = generate_random_file_name("jpg")
+        storage_name = generate_random_filename("jpg")
         storage_path = get_uploaded_file_path(storage_name)
         image.save(storage_path)
         size = os.path.getsize(storage_path)

@@ -1,7 +1,7 @@
 import logging
 from faker import Faker
 
-from app.utils import generate_random_file_name
+from app.utils import generate_random_filename
 from app.base_model import db
 from app.modules.face.models import Face, FacialArea
 from app.modules.image.models import Image
@@ -19,7 +19,7 @@ def generate_factory_images(count=1, source="upload"):
             width=fake.random_int(min=1, max=100),
             height=fake.random_int(min=1, max=100),
             source=source,
-            storage_name=generate_random_file_name(),
+            storage_name=generate_random_filename(),
         )
         for _ in range(count)
     ]

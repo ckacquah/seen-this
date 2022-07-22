@@ -25,7 +25,7 @@ def generate_uuid():
     return str(uuid.uuid4())
 
 
-def generate_random_file_name(extension=""):
+def generate_random_filename(extension=""):
     return (
         str(datetime.now()).replace(" ", "_").replace(":", "-")
         + "_"

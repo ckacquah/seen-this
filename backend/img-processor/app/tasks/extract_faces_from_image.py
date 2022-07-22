@@ -11,7 +11,7 @@ from app.modules.image.models import Image
 from app.utils import (
     get_uploaded_file_path,
     get_processed_face_path,
-    generate_random_file_name,
+    generate_random_filename,
 )
 
 
@@ -44,7 +44,7 @@ def extract_faces_as_images(image_path, detected_faces):
 def save_extracted_faces_to_storage(extracted_faces):
     saved_faces = []
     for extracted_face in extracted_faces:
-        file_name = generate_random_file_name() + ".jpeg"
+        file_name = generate_random_filename() + ".jpeg"
         file_path = get_processed_face_path(file_name)
         cv2.imwrite(file_path, extracted_face["image"])
         saved_faces.append(
