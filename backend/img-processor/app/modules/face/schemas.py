@@ -26,5 +26,5 @@ class FaceSchema(ma.Schema):
     facial_area = ma.Nested(FacialAreaSchema)
 
 
-face_schema = FacialAreaSchema()
-faces_schema = FacialAreaSchema(many=True)
+face_schema = FaceSchema()
+faces_schema = FaceSchema(many=True)
