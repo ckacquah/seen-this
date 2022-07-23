@@ -3,7 +3,10 @@ import io
 import PIL
 
 from app.base_model import db
-from app.utils import generate_random_filename, get_uploaded_file_path, allowed_file
+from app.utils import (
+    generate_random_filename,
+    get_uploaded_file_path,
+)
 from app.modules.image.models import Image
 from app.modules.image.schemas import image_schema
 
