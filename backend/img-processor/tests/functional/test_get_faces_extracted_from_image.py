@@ -1,13 +1,16 @@
 import uuid
 
-from conftest import client
-
 from app.seeders import run_face_seeder
 from app.modules.face.models import Face
-from app.modules.image.models import Image
 
 
 def test_get_faces_extracted_by_image(client):
+    """
+    GIVEN a flask application configured for testing
+    WHEN the '/image/<image_id>/faces' is requested (GET) with image_id
+        that exist
+    THEN check that the response is valid
+    """
     run_face_seeder()
     face = Face.query.first()
     image = face.parent
@@ -19,7 +22,14 @@ def test_get_faces_extracted_by_image(client):
     assert response.json[0]["parent_uuid"] == face.parent_uuid
 
 
-def test_get_faces_extracted_by_image_returns_404_if_image_does_not_exist(client):
+def test_get_faces_extracted_by_image_with_unknown_image_id(client):
+    """
+    GIVEN a flask application configured for testing
+    WHEN the '/image/<image_id>/faces' is requested (GET) with image_id
+        that does
+        not exist
+    THEN check that a '404' status code is returned
+    """
     response = client.get(f"image/{str(uuid.uuid4())}/faces")
     assert response.status_code == 404
     assert response.json["message"] == "Image not found"

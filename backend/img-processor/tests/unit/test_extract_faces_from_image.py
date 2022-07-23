@@ -1,9 +1,6 @@
 import os
 import cv2
-import json
-import pytest
 
-from conftest import client
 from app.modules.face.models import Face
 from app.modules.image.models import Image
 from app.utils import get_processed_face_path
@@ -65,7 +62,9 @@ def test_extract_faces_as_images(client):
     assert len(extract_faces) == 4
     for index, extract_face in enumerate(extract_faces):
         assert extract_face["score"] == SAMPLE_FACES[index]["score"]
-        assert extract_face["facial_area"] == SAMPLE_FACES[index]["facial_area"]
+        assert (
+            extract_face["facial_area"] == SAMPLE_FACES[index]["facial_area"]
+        )
         facial_area = SAMPLE_FACES[index]["facial_area"]
         image_height, image_width, image_channels = extract_face["image"].shape
         assert image_channels == 3
