@@ -8,7 +8,9 @@ class Config(object):
     DATABASE_CONNECT_OPTIONS = {}
 
     # Define the application directory
-    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+    BASE_DIR = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "..")
+    )
 
     # Application threads. A common general assumption is
     # using 2 per available processor cores - to handle

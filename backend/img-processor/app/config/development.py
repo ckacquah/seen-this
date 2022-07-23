@@ -8,4 +8,6 @@ class DevelopmentConfig(Config):
 
     @property
     def SQLALCHEMY_DATABASE_URI(self):
-        return "sqlite:///" + os.path.join(self.DATABASE_FOLDER, "development.db")
+        return "sqlite:///" + os.path.join(
+            self.DATABASE_FOLDER, "development.db"
+        )

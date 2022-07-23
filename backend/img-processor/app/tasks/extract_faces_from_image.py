@@ -1,9 +1,8 @@
 import os
 import cv2
-import json
 from retinaface import RetinaFace
 
-from app.tasks import celery, flask_app
+from app.tasks import celery
 from app.base_model import db
 from app.modules.face.models import Face
 from app.modules.face.schemas import faces_schema

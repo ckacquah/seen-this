@@ -13,7 +13,9 @@ class Face(BaseModel):
     score = db.Column(db.Integer, nullable=False)
     file_uuid = db.Column(db.String(255), db.ForeignKey(Image.uuid))
     parent_uuid = db.Column(db.String(255), db.ForeignKey(Image.uuid))
-    facial_area_uuid = db.Column(db.String(255), db.ForeignKey(FacialArea.uuid))
+    facial_area_uuid = db.Column(
+        db.String(255), db.ForeignKey(FacialArea.uuid)
+    )
     file = db.relationship(Image, foreign_keys=[file_uuid])
     parent = db.relationship(Image, foreign_keys=[parent_uuid])
     facial_area = db.relationship(FacialArea, foreign_keys=[facial_area_uuid])

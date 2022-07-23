@@ -3,9 +3,6 @@ import logging
 # Import flask
 from flask import Flask
 
-# Import SQLAlchemy
-from flask_sqlalchemy import SQLAlchemy
-
 # Import Flask Migrate
 from flask_migrate import Migrate
 
@@ -13,7 +10,6 @@ from flask_migrate import Migrate
 from config import config
 
 # Import app models & blueprints
-from app.tasks import celery
 from app.seeders import run_seeds
 from app.base_model import db, ma
 from app.modules.face.controllers import face_controller
@@ -38,7 +34,7 @@ def create_app(config=config):
     ma.init_app(app)
 
     # Handling database migrations
-    migrate = Migrate(app, db)
+    Migrate(app, db)
 
     @app.cli.command("seed")
     def seed():

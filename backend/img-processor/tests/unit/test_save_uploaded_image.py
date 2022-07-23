@@ -27,4 +27,4 @@ def test_save_uploaded_image(client):
     # check if the file extension is .jpg
     assert saved_image["storage_name"].split(".")[-1] == "jpg"
     assert saved_image["size"] == os.path.getsize(image_path)
-    assert (saved_image["width"], saved_image["height"]) == image.size
+    assert saved_image["width"], saved_image["height"] == image.size

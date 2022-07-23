@@ -10,7 +10,10 @@ PROCESSED_FACES_FOLDER = config.PROCESSED_FACES_FOLDER
 
 
 def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    return (
+        "." in filename
+        and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
 
 
 def get_processed_face_path(filename):
