@@ -41,7 +41,6 @@ def test_upload_image_without_any_file(client):
     """
     GIVEN a flask application configured for testing
     WHEN the '/image/upload' is posted to (POST) without an image
-         not exist
     THEN check that a '400' status code is returned
     """
     response = client.post("image/upload", data={})
