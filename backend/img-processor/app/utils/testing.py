@@ -1,5 +1,7 @@
 import os
 
+from PIL import ImageChops
+
 from app.config.testing import TestingConfig
 
 config = TestingConfig()
@@ -9,6 +11,33 @@ SAMPLES_FOLDER = config.SAMPLES_FOLDER
 PROCESSED_FACES_FOLDER = config.PROCESSED_FACES_FOLDER
 
 sample_images = ["01.jpeg", "02.jpeg", "03.jpeg", "04.jpeg", "05.jpeg"]
+
+
+def no_image_pixel_differences(
+    base_image,
+    compare_image,
+    threshold=(
+        15,
+        15,
+        15,
+    ),
+):
+    """
+    Calculates the bounding box of the non-zero regions in the image.
+    :param base_image: target image to find
+    :param compare_image:  set of images containing the target image
+    :return: The bounding box is returned as a 4-tuple defining the
+             left, upper, right, and lower pixel coordinate. If the image
+             is completely empty, this method returns None.
+    """
+    # Returns the absolute value of the pixel-by-pixel
+    # difference between two images.
+
+    diff = ImageChops.difference(base_image, compare_image)
+    if max(list(diff.getdata())) > threshold:
+        return False
+    else:
+        return True
 
 
 def delete_processed_files():

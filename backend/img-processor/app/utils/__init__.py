@@ -9,7 +9,7 @@ ALLOWED_EXTENSIONS = config.ALLOWED_EXTENSIONS
 PROCESSED_FACES_FOLDER = config.PROCESSED_FACES_FOLDER
 
 
-def allowed_file(filename):
+def is_allowed_image_name(filename):
     return (
         "." in filename
         and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS

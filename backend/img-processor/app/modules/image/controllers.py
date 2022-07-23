@@ -50,9 +50,7 @@ def get_faces_extracted_by_image(image_id):
 def upload_image():
     if "image" in request.files:
         image_file = request.files["image"]
-        results = save_uploaded_image(
-            image_file.filename, image_file.stream.read()
-        )
+        results = save_uploaded_image(image_file)
         if results is not None:
             return jsonify(results), 201
     return jsonify({"message": "Failed to upload image"}), 400
