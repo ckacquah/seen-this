@@ -134,7 +134,7 @@ def test_store_PIL_Image_as_jpeg_in_uploads_folder(client, monkeypatch):
 def test_store_uploaded_image_info_to_db(client, monkeypatch):
     """
     GIVEN a uploaded image info
-    WHEN the store the information on the disk
+    WHEN the store the image info to the database
     THEN check that the file info is stored correctly and return the image
          info as a dict
     """
