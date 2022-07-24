@@ -1,10 +1,13 @@
 import logging
 from faker import Faker
+from werkzeug.datastructures import FileStorage
 
 from app.utils import generate_random_filename
 from app.base_model import db
 from app.modules.face.models import Face, FacialArea
 from app.modules.image.models import Image
+from app.utils.testing import get_sample_image_path
+from app.modules.image.services import save_uploaded_image
 
 fake = Faker()
 
@@ -39,8 +42,13 @@ def generate_factory_facial_areas(count=1):
 
 def run_image_seeder():
     logger.info("Running image seeder...")
-    db.session.add_all(generate_factory_images(5))
-    db.session.commit()
+    file_path = get_sample_image_path("sample.jpg")
+    for _ in range(5):
+        with open(file_path, mode="rb") as f:
+            file_storage_object = FileStorage(
+                f, filename=generate_random_filename(extension="jpg")
+            )
+            save_uploaded_image(file_storage_object)
     logger.info("Image seeder has completed")
 
 
