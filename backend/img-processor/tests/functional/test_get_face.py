@@ -18,7 +18,7 @@ def test_get_all_faces(client):
     for i, face in enumerate(faces):
         assert response.json[i]["uuid"] == face.uuid
         assert response.json[i]["score"] == face.score
-        assert response.json[i]["file_uuid"] == face.file_uuid
+        assert response.json[i]["image_uuid"] == face.image_uuid
         assert response.json[i]["parent_uuid"] == face.parent_uuid
 
 
@@ -45,7 +45,7 @@ def test_get_face_by_id(client):
     assert response.status_code == 200
     assert response.json["uuid"] == face.uuid
     assert response.json["score"] == face.score
-    assert response.json["file_uuid"] == face.file_uuid
+    assert response.json["image_uuid"] == face.image_uuid
     assert response.json["parent_uuid"] == face.parent_uuid
 
 

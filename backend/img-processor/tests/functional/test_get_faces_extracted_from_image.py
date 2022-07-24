@@ -18,7 +18,7 @@ def test_get_faces_extracted_by_image(client):
     assert response.status_code == 200
     assert response.json[0]["uuid"] == face.uuid
     assert response.json[0]["score"] == face.score
-    assert response.json[0]["file_uuid"] == face.file_uuid
+    assert response.json[0]["image_uuid"] == face.image_uuid
     assert response.json[0]["parent_uuid"] == face.parent_uuid
 
 

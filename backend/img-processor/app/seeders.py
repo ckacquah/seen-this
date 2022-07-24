@@ -62,7 +62,7 @@ def run_face_seeder():
         faces.append(
             Face(
                 score=fake.random_int(min=1, max=100),
-                file=files[i],
+                image=files[i],
                 parent=parents[i],
                 facial_area=facial_areas[i],
             )

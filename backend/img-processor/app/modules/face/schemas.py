@@ -15,7 +15,7 @@ class FaceSchema(ma.Schema):
         fields = (
             "uuid",
             "score",
-            "file_uuid",
+            "image_uuid",
             "parent_uuid",
             "facial_area",
             "created_at",

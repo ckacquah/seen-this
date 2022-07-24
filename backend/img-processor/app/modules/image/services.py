@@ -154,7 +154,7 @@ def store_detected_faces_to_db(detected_faces, parent):
     faces = [
         Face(
             parent=parent,
-            file=detected_face["image"],
+            image=detected_face["image"],
             score=detected_face["score"],
             facial_area=FacialArea(
                 x1=detected_face["facial_area"][0],
