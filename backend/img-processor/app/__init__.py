@@ -14,6 +14,7 @@ from app.seeders import run_seeds
 from app.base_model import db, ma
 from app.modules.face.controllers import face_controller
 from app.modules.image.controllers import image_controller
+from app.modules.target.controllers import target_controller
 
 
 # Select logging level for the running instance of the application
@@ -47,6 +48,7 @@ def create_app(config=config):
     # Register blueprint(s)
     app.register_blueprint(face_controller)
     app.register_blueprint(image_controller)
+    app.register_blueprint(target_controller)
 
     return app
 

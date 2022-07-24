@@ -6,6 +6,7 @@ from app.utils import generate_random_filename
 from app.base_model import db
 from app.modules.face.models import Face, FacialArea
 from app.modules.image.models import Image
+from app.modules.target.models import Target, TargetTag
 from app.utils.testing import get_sample_image_path
 from app.modules.image.services import save_uploaded_image
 
@@ -72,7 +73,23 @@ def run_face_seeder():
     logger.info("Face seeder has completed")
 
 
+def run_target_seeder():
+    logger.info("Running target seeder...")
+    run_face_seeder()
+    faces = Face.query.all()
+    tags = [TargetTag(name=fake.name()) for _ in range(5)]
+    target = Target(title=fake.name(), description=fake.text())
+    for index in range(5):
+        target.tags.append(tags[index])
+        target.faces.append(faces[index])
+    db.session.add(target)
+    db.session.add_all(tags)
+    db.session.commit()
+    logger.info("Target seeder has completed")
+
+
 def run_seeds():
     logger.info("Start seeding...")
     run_image_seeder()
     run_face_seeder()
+    run_target_seeder()
