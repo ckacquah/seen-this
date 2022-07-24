@@ -131,7 +131,7 @@ def test_store_PIL_Image_as_jpeg_in_uploads_folder(client, monkeypatch):
     )
 
 
-def test_store_uploaded_image_info_to_db(client, monkeypatch):
+def test_store_uploaded_image_info_to_db(client):
     """
     GIVEN a uploaded image info
     WHEN the store the image info to the database
