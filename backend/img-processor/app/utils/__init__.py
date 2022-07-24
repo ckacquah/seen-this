@@ -16,7 +16,7 @@ def is_allowed_image_name(filename):
     )
 
 
-def get_processed_face_path(filename):
+def get_processed_file_path(filename):
     return os.path.join(PROCESSED_FACES_FOLDER, filename)
 
 
