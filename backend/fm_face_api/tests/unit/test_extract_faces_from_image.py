@@ -1,7 +1,7 @@
 import PIL
 from unittest.mock import Mock, call
 
-from fm_face.tasks.extract_faces_from_image import extract_faces_from_image
+from fm_face.jobs.extract_faces_from_image import extract_faces_from_image
 from fm_face.utils.testing.seeders import run_image_seeder
 from fm_face.modules.face.models import Face
 from fm_face.modules.image.models import Image
@@ -56,19 +56,19 @@ def test_extract_faces_from_image_object(client, monkeypatch):
     mock_store_detected_faces_images_to_disk = Mock(return_value=SAMPLE_FACES)
 
     monkeypatch.setattr(
-        "fm_face.tasks.extract_faces_from_image.get_uploaded_file_path",
+        "fm_face.jobs.extract_faces_from_image.get_uploaded_file_path",
         mock_get_uploaded_file_path,
     )
     monkeypatch.setattr(
-        "fm_face.tasks.extract_faces_from_image.detect_faces_from_image",
+        "fm_face.jobs.extract_faces_from_image.detect_faces_from_image",
         mock_detect_faces_from_image,
     )
     monkeypatch.setattr(
-        "fm_face.tasks.extract_faces_from_image.store_detected_faces_to_db",
+        "fm_face.jobs.extract_faces_from_image.store_detected_faces_to_db",
         mock_store_detected_faces_to_db,
     )
     monkeypatch.setattr(
-        "fm_face.tasks.extract_faces_from_image."
+        "fm_face.jobs.extract_faces_from_image."
         "store_detected_faces_images_to_processed_folder",
         mock_store_detected_faces_images_to_disk,
     )

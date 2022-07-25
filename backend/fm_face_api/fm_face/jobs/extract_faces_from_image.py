@@ -1,4 +1,4 @@
-from fm_face.tasks import celery
+from fm_face.jobs import celery
 from fm_face.utils import get_uploaded_file_path
 from fm_face.modules.image.services import (
     detect_faces_from_image,
