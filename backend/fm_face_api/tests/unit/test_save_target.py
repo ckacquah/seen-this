@@ -1,4 +1,4 @@
-from fm_face.seeders import run_face_seeder
+from fm_face.utils.testing.seeders import run_face_seeder
 from fm_face.modules.face.models import Face
 from fm_face.modules.target.models import Target, TargetTag
 from fm_face.modules.target.services import save_target_from_dict

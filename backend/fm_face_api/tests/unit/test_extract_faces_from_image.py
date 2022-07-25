@@ -2,7 +2,7 @@ import PIL
 from unittest.mock import Mock, call
 
 from fm_face.tasks.extract_faces_from_image import extract_faces_from_image
-from fm_face.seeders import run_image_seeder
+from fm_face.utils.testing.seeders import run_image_seeder
 from fm_face.modules.face.models import Face
 from fm_face.modules.image.models import Image
 from fm_face.modules.image.services import (

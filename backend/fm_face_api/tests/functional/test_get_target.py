@@ -1,7 +1,7 @@
 import uuid
 
 from fm_face.modules.target.models import Target
-from fm_face.seeders import run_target_seeder
+from fm_face.utils.testing.seeders import run_target_seeder
 
 
 def test_get_all_targets(client):

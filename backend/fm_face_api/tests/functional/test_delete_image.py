@@ -1,6 +1,6 @@
 import uuid
 
-from fm_face.seeders import run_image_seeder
+from fm_face.utils.testing.seeders import run_image_seeder
 from fm_face.modules.image.models import Image
 
 

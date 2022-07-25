@@ -10,7 +10,6 @@ from flask_migrate import Migrate
 from config import config
 
 # Import app models & blueprints
-from fm_face.seeders import run_seeds
 from fm_face.base_model import db, ma
 from fm_face.modules.face.controllers import face_blueprint
 from fm_face.modules.image.controllers import image_blueprint
@@ -36,10 +35,6 @@ def create_app(config=config):
 
     # Handling database migrations
     Migrate(app, db)
-
-    @app.cli.command("seed")
-    def seed():
-        run_seeds()
 
     @app.errorhandler(404)
     def not_found(error):
