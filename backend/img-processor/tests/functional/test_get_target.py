@@ -12,7 +12,7 @@ def test_get_all_targets(client):
     """
     run_target_seeder()
     targets = Target.query.all()
-    response = client.get("target/")
+    response = client.get("/target")
 
     assert response.status_code == 200
     assert len(response.json) == len(targets)
@@ -38,10 +38,10 @@ def test_get_all_targets(client):
 def test_get_all_targets_returns_nothing_if_db_is_empty(client):
     """
     GIVEN a flask application configured for testing
-    WHEN the '/tags' is requested (GET)
+    WHEN the '/tagert' is requested (GET)
     THEN check that the response is valid and empty
     """
-    response = client.get("target/")
+    response = client.get("/target")
     assert response.status_code == 200
     assert len(response.json) == 0
 
