@@ -1,4 +1,7 @@
+from marshmallow import fields, validate, ValidationError
+
 from app.base_model import ma
+from app.modules.face.models import Face
 from app.modules.face.schemas import FaceSchema
 
 
@@ -26,3 +29,29 @@ class TargetSchema(ma.Schema):
 
 target_schema = TargetSchema()
 targets_schema = TargetSchema(many=True)
+
+
+def validate_face(face_uuid):
+    if Face.query.get(str(face_uuid)) is None:
+        raise ValidationError(
+            f"There is no face resource with a uuid of {face_uuid}"
+        )
+
+
+class AddTargetRequestSchema(ma.Schema):
+    title = fields.Str(required=True)
+    description = fields.Str(required=True)
+    tags = fields.List(
+        fields.Str(required=True),
+        validate=validate.Length(min=0),
+        required=False,
+    )
+
+    faces = fields.List(
+        fields.UUID(required=True, validate=validate_face),
+        validate=validate.Length(min=1),
+        required=True,
+    )
+
+
+add_target_reqeust_schema = AddTargetRequestSchema()
