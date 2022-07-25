@@ -22,7 +22,7 @@ def test_delete_image_by_id(client):
         assert len(Image.query.all()) == 4 - i
 
 
-def test_delete_image_by_id_with_unknown_face_id(client):
+def test_delete_image_by_id_with_unknown_image_id(client):
     """
     GIVEN a flask application configured for testing
     WHEN the '/image/<image_id>' is deleted (DELETE) with image_id that does
