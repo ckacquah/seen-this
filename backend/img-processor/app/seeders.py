@@ -18,7 +18,7 @@ logger = logging.getLogger("seeder")
 def generate_factory_images(count=1, source="upload"):
     return [
         Image(
-            name=fake.name(),
+            name=generate_random_filename(extension="jpg"),
             size=fake.random_int(min=1, max=100),
             width=fake.random_int(min=1, max=100),
             height=fake.random_int(min=1, max=100),
