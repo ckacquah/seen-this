@@ -10,15 +10,15 @@ from app.modules.image.models import Image
 from app.modules.image.schemas import images_schema, image_schema
 from app.modules.image.services import save_uploaded_image
 
-image_controller = Blueprint("image", __name__, url_prefix="/image")
+image_blueprint = Blueprint("image", __name__, url_prefix="/image")
 
 
-@image_controller.route("/", methods=["GET"])
+@image_blueprint.route("/", methods=["GET"])
 def get_all_images():
     return jsonify(images_schema.dump(Image.query.all())), 200
 
 
-@image_controller.route("/<image_id>", methods=["GET"])
+@image_blueprint.route("/<image_id>", methods=["GET"])
 def get_image_by_id(image_id):
     image = Image.query.get(image_id)
     if image is None:
@@ -26,7 +26,7 @@ def get_image_by_id(image_id):
     return jsonify(image_schema.dump(image)), 200
 
 
-@image_controller.route("/<image_id>", methods=["DELETE"])
+@image_blueprint.route("/<image_id>", methods=["DELETE"])
 def delete_image_by_id(image_id):
     image = Image.query.get(image_id)
     if image is None:
@@ -36,7 +36,7 @@ def delete_image_by_id(image_id):
     return jsonify({"message": "Image has been deleted successfully"}), 200
 
 
-@image_controller.route("/<image_id>/faces", methods=["GET"])
+@image_blueprint.route("/<image_id>/faces", methods=["GET"])
 def get_faces_extracted_by_image(image_id):
     if Image.query.get(image_id) is None:
         return jsonify({"message": "Image not found"}), 404
@@ -46,7 +46,7 @@ def get_faces_extracted_by_image(image_id):
     )
 
 
-@image_controller.route("/upload", methods=["POST"])
+@image_blueprint.route("/upload", methods=["POST"])
 def upload_image():
     if "image" in request.files:
         image_file = request.files["image"]
@@ -56,7 +56,7 @@ def upload_image():
     return jsonify({"message": "Failed to upload image"}), 400
 
 
-@image_controller.route("/download/<filename>", methods=["GET"])
+@image_blueprint.route("/download/<filename>", methods=["GET"])
 def download_image(filename):
     uploaded_image_path = get_uploaded_file_path(filename)
     if os.path.exists(uploaded_image_path):

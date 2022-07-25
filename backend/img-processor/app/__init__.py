@@ -12,9 +12,9 @@ from config import config
 # Import app models & blueprints
 from app.seeders import run_seeds
 from app.base_model import db, ma
-from app.modules.face.controllers import face_controller
-from app.modules.image.controllers import image_controller
-from app.modules.target.controllers import target_controller
+from app.modules.face.controllers import face_blueprint
+from app.modules.image.controllers import image_blueprint
+from app.modules.target.controllers import target_blueprint
 
 
 # Select logging level for the running instance of the application
@@ -46,9 +46,9 @@ def create_app(config=config):
         return {"message": "Not found"}, 404
 
     # Register blueprint(s)
-    app.register_blueprint(face_controller)
-    app.register_blueprint(image_controller)
-    app.register_blueprint(target_controller)
+    app.register_blueprint(face_blueprint)
+    app.register_blueprint(image_blueprint)
+    app.register_blueprint(target_blueprint)
 
     return app
 
