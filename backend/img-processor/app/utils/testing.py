@@ -43,7 +43,8 @@ def no_image_pixel_differences(
 def delete_processed_files():
     filelist = os.listdir(PROCESSED_FACES_FOLDER)
     for f in filelist:
-        os.remove(os.path.join(PROCESSED_FACES_FOLDER, f))
+        if f != ".gitignore":
+            os.remove(os.path.join(PROCESSED_FACES_FOLDER, f))
 
 
 def delete_uploaded_files():
