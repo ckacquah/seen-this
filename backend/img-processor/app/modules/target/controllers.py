@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
 
-
+from app.base_model import db
 from app.modules.target.services import save_target_from_dict
 from app.modules.target.models import Target
 from app.modules.target.schemas import (
@@ -34,3 +34,13 @@ def get_target_by_id(target_id):
     if target is None:
         return jsonify({"message": "Target resource not found"}), 404
     return jsonify(target_schema.dump(target)), 200
+
+
+@target_controller.route("/<target_id>", methods=["DELETE"])
+def delete_target_by_id(target_id):
+    target = Target.query.get(target_id)
+    if target is None:
+        return jsonify({"message": "target not found"}), 404
+    db.session.delete(target)
+    db.session.commit()
+    return jsonify({"message": "target has been deleted successfully"}), 200
