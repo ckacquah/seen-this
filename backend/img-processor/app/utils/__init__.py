@@ -1,6 +1,8 @@
 import os
 import uuid
 from datetime import datetime
+from werkzeug.utils import secure_filename
+
 
 from config import config
 
@@ -17,11 +19,11 @@ def is_allowed_image_name(filename):
 
 
 def get_processed_file_path(filename):
-    return os.path.join(PROCESSED_FACES_FOLDER, filename)
+    return os.path.join(PROCESSED_FACES_FOLDER, secure_filename(filename))
 
 
 def get_uploaded_file_path(filename):
-    return os.path.join(UPLOAD_FOLDER, filename)
+    return os.path.join(UPLOAD_FOLDER, secure_filename(filename))
 
 
 def generate_uuid():
