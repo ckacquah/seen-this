@@ -73,16 +73,14 @@ def generate_factory_faces(count=1, use_files=False):
 
 def run_image_seeder():
     logger.info("Running image seeder...")
-    faces = generate_factory_images(5)
-    db.session.add_all(faces)
+    db.session.add_all(generate_factory_images(5, use_files=True))
     db.session.commit()
     logger.info("Image seeder has completed")
 
 
 def run_face_seeder():
     logger.info("Running face seeder...")
-    faces = generate_factory_faces(5, use_files=True)
-    db.session.add_all(faces)
+    db.session.add_all(generate_factory_faces(5, use_files=True))
     db.session.commit()
     logger.info("Face seeder has completed")
 
