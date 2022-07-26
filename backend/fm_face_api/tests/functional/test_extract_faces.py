@@ -3,21 +3,22 @@ from unittest.mock import Mock
 
 from fm_face.modules.jobs.models import FaceExtractionJob
 from fm_face.modules.image.models import Image
-from fm_face.utils.testing.seeders import run_image_seeder
+from fm_face.utils.testing.seeders import run_image_seeder, run_job_seeder
+
+
+class FakeTaskResult:
+    id = "fake-task-id"
 
 
 def test_start_face_extraction_job(client, monkeypatch):
     """
     GIVEN a flask application configured for testing
-    WHEN the '/<image_id>/extract-faces' is posted to (POST) with valid
+    WHEN the '/image/<image_id>/extract-faces' is posted to (POST) with valid
          image_id
     THEN check that response is valid
     """
     run_image_seeder()
     image = Image.query.first()
-
-    class FakeTaskResult:
-        id = "fake-task-id"
 
     mock_extract_faces_from_image_apply_async = Mock(
         return_value=FakeTaskResult()
@@ -52,13 +53,10 @@ def test_start_face_extraction_job(client, monkeypatch):
 def test_start_face_extraction_job_with_invalid_image_id(client, monkeypatch):
     """
     GIVEN a flask application configured for testing
-    WHEN the '/<image_id>/extract-faces' is posted to (POST) with invalid
+    WHEN the '/image/<image_id>/extract-faces' is posted to (POST) with invalid
          image_id
     THEN check that a '404' status code is returned and no job is created
     """
-
-    class FakeTaskResult:
-        id = "fake-task-id"
 
     mock_extract_faces_from_image_apply_async = Mock(
         return_value=FakeTaskResult()
@@ -80,3 +78,37 @@ def test_start_face_extraction_job_with_invalid_image_id(client, monkeypatch):
     assert response.status_code == 404
     assert response.json["message"] == "Image not found"
     assert job is None
+
+
+def test_get_face_extraction_job_status(client, monkeypatch):
+    """
+    GIVEN a flask application configured for testing
+    WHEN the '/extraction-jobs/<job_id>' is requested (GET) with valid
+         job_id
+    THEN check that response is valid
+    """
+    run_job_seeder()
+
+    job = FaceExtractionJob.query.first()
+
+    response = client.get(f"/extraction-jobs/{job.uuid}")
+
+    assert response.status_code == 200
+    assert response.json["uuid"] == job.uuid
+    assert response.json["status"] == job.status
+    assert response.json["image_uuid"] == job.image_uuid
+    assert response.json["completion_time"] == job.completion_time
+    assert response.json["percentage_complete"] == job.percentage_complete
+
+
+def test_get_face_extraction_job_status_with_invalid_job_id(client):
+    """
+    GIVEN a flask application configured for testing
+    WHEN the '/extraction-jobs/<job_id>' is requested (GET) with invalid
+         job_id
+    THEN check that a status code of '404' is returned
+    """
+    response = client.get(f"/extraction-jobs/{str(uuid.uuid4())}")
+
+    assert response.status_code == 404
+    assert response.json["message"] == "Extraction job not found"

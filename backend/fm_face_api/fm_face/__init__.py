@@ -11,6 +11,7 @@ from config import config
 
 # Import app models & blueprints
 from fm_face.base_model import db, ma
+from fm_face.modules.jobs.controllers import extraction_jobs_blueprint
 from fm_face.modules.face.controllers import face_blueprint
 from fm_face.modules.image.controllers import image_blueprint
 from fm_face.modules.target.controllers import target_blueprint
@@ -44,6 +45,7 @@ def create_app(config=config):
     app.register_blueprint(face_blueprint)
     app.register_blueprint(image_blueprint)
     app.register_blueprint(target_blueprint)
+    app.register_blueprint(extraction_jobs_blueprint)
 
     return app
 

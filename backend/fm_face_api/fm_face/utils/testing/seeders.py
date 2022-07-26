@@ -3,6 +3,7 @@ from faker import Faker
 from shutil import copyfile
 from fm_face.base_model import db
 
+from fm_face.modules.jobs.models import FaceExtractionJob
 from fm_face.modules.face.models import Face, FacialArea
 from fm_face.modules.image.models import Image
 from fm_face.modules.target.models import Target, TargetTag
@@ -98,8 +99,23 @@ def run_target_seeder():
     logger.info("Target seeder has completed")
 
 
+def run_job_seeder():
+    logger.info("Running job seeder...")
+    db.session.add(
+        FaceExtractionJob(
+            image_uuid="123",
+            status="started",
+            percentage_complete=0,
+            celery_task_id="celery_task_id",
+        )
+    )
+    db.session.commit()
+    logger.info("Job seeder has completed")
+
+
 def run_seeds():
     logger.info("Start seeding...")
     run_image_seeder()
     run_face_seeder()
     run_target_seeder()
+    run_job_seeder()
