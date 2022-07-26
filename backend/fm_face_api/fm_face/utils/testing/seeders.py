@@ -19,7 +19,7 @@ fake = Faker()
 logger = logging.getLogger("seeder")
 
 
-def generate_factory_images(count=1, source="upload", use_files=False):
+def generate_fake_images(count=1, source="upload", use_files=False):
     filenames = [
         generate_random_filename(extension="jpg") for _ in range(count)
     ]
@@ -45,7 +45,7 @@ def generate_factory_images(count=1, source="upload", use_files=False):
     ]
 
 
-def generate_factory_facial_areas(count=1):
+def generate_fake_facial_areas(count=1):
     return [
         FacialArea(
             x1=fake.random_int(min=100, max=1000),
@@ -57,10 +57,10 @@ def generate_factory_facial_areas(count=1):
     ]
 
 
-def generate_factory_faces(count=1, use_files=False):
-    facial_areas = generate_factory_facial_areas(5)
-    parents = generate_factory_images(5, use_files=use_files)
-    images = generate_factory_images(5, "processed", use_files=use_files)
+def generate_fake_faces(count=1, use_files=False):
+    facial_areas = generate_fake_facial_areas(5)
+    parents = generate_fake_images(5, use_files=use_files)
+    images = generate_fake_images(5, "processed", use_files=use_files)
     return [
         Face(
             score=fake.random_int(min=1, max=100),
@@ -74,14 +74,14 @@ def generate_factory_faces(count=1, use_files=False):
 
 def run_image_seeder():
     logger.info("Running image seeder...")
-    db.session.add_all(generate_factory_images(5, use_files=True))
+    db.session.add_all(generate_fake_images(5, use_files=True))
     db.session.commit()
     logger.info("Image seeder has completed")
 
 
 def run_face_seeder():
     logger.info("Running face seeder...")
-    db.session.add_all(generate_factory_faces(5, use_files=True))
+    db.session.add_all(generate_fake_faces(5, use_files=True))
     db.session.commit()
     logger.info("Face seeder has completed")
 
@@ -91,7 +91,7 @@ def run_target_seeder():
     target = Target(
         title=fake.name(),
         description=fake.text(),
-        faces=generate_factory_faces(5, use_files=True),
+        faces=generate_fake_faces(5, use_files=True),
         tags=[TargetTag(name=fake.name()) for _ in range(5)],
     )
     db.session.add(target)
