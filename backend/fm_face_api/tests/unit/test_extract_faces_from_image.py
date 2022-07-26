@@ -73,7 +73,7 @@ def test_extract_faces_from_image_object(client, monkeypatch):
         mock_store_detected_faces_images_to_disk,
     )
 
-    faces = extract_faces_from_image.apply(args=(image,)).get()
+    faces = extract_faces_from_image.apply(args=(image.uuid,)).get()
 
     mock_get_uploaded_file_path.assert_called_once_with(image.storage_name)
     mock_detect_faces_from_image.assert_called_once_with(SAMPLE_IMAGE_PATH)
