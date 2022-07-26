@@ -33,7 +33,6 @@ def test_add_target(client):
         content_type="application/json",
     )
     target = Target.query.first()
-    print(response.json)
     assert response.status_code == 201
     assert target.title == request_data["title"]
     assert target.description == request_data["description"]
