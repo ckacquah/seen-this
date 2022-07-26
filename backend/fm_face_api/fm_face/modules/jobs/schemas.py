@@ -1,16 +1,17 @@
 from fm_face.base_model import ma
 
 
-class JobSchema(ma.Schema):
+class FaceExtractionJobSchema(ma.Schema):
     class Meta:
         fields = (
             "uuid",
             "tag",
             "status",
-            "percentage_complete",
+            "image_uuid",
             "completion_time",
+            "percentage_complete",
         )
 
 
-job_schema = JobSchema()
-jobs_schema = JobSchema(many=True)
+face_extraction_job_schema = FaceExtractionJobSchema()
+face_extraction_jobs_schema = FaceExtractionJobSchema(many=True)

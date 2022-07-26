@@ -3,8 +3,8 @@ from flask import Blueprint, jsonify, request, send_from_directory
 from config import config
 from fm_face.base_model import db
 from fm_face.jobs.extract_faces_from_image import extract_faces_from_image
-from fm_face.modules.jobs.models import Job
-from fm_face.modules.jobs.schemas import job_schema
+from fm_face.modules.jobs.models import FaceExtractionJob
+from fm_face.modules.jobs.schemas import face_extraction_job_schema
 from fm_face.modules.face.models import Face
 from fm_face.modules.face.schemas import faces_schema
 from fm_face.modules.image.models import Image
@@ -74,12 +74,12 @@ def start_face_extraction_job(image_id):
         return jsonify({"message": "Image not found"}), 404
 
     task = extract_faces_from_image.apply_async(args=(image_id,))
-    job = Job(
-        celery_task_id=task.id,
+    job = FaceExtractionJob(
         status="started",
+        image_uuid=image_id,
+        celery_task_id=task.id,
         percentage_complete=0,
-        tag="face extraction",
     )
     db.session.add(job)
     db.session.commit()
-    return jsonify(job_schema.dump(job)), 201
+    return jsonify(face_extraction_job_schema.dump(job)), 201
