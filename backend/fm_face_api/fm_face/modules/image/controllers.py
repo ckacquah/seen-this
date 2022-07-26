@@ -1,9 +1,7 @@
-import os
+from flask import Blueprint, jsonify, request, send_from_directory
 
-from flask import Blueprint, jsonify, request, send_file
-
+from config import config
 from fm_face.base_model import db
-from fm_face.utils import get_uploaded_file_path
 from fm_face.modules.face.models import Face
 from fm_face.modules.face.schemas import faces_schema
 from fm_face.modules.image.models import Image
@@ -58,7 +56,10 @@ def upload_image():
 
 @image_blueprint.route("/download/<filename>", methods=["GET"])
 def download_image(filename):
-    uploaded_image_path = get_uploaded_file_path(filename)
-    if os.path.exists(uploaded_image_path):
-        return send_file(uploaded_image_path)
-    return jsonify({"message": "Image not found"}), 404
+    image = Image.query.filter_by(storage_name=filename).first()
+    if image is None:
+        return jsonify({"message": "Image not found"}), 404
+    if image.source == "upload":
+        return send_from_directory(config.UPLOAD_FOLDER, filename)
+    elif image.source == "processed":
+        return send_from_directory(config.PROCESSED_FACES_FOLDER, filename)
