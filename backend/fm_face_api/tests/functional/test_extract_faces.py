@@ -76,4 +76,5 @@ def test_start_face_extraction_job_with_invalid_image_id(client, monkeypatch):
     mock_extract_faces_from_image_apply_async.assert_not_called()
 
     assert response.status_code == 404
+    assert response.json["message"] == "Image not found"
     assert job is None
