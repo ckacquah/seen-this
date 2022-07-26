@@ -1,31 +1,46 @@
 import logging
 from faker import Faker
-from werkzeug.datastructures import FileStorage
-
-from fm_face.utils import generate_random_filename
+from shutil import copyfile
 from fm_face.base_model import db
+
 from fm_face.modules.face.models import Face, FacialArea
 from fm_face.modules.image.models import Image
 from fm_face.modules.target.models import Target, TargetTag
 from fm_face.utils.testing import get_sample_image_path
-from fm_face.modules.image.services import save_uploaded_image
+from fm_face.utils import (
+    get_uploaded_file_path,
+    get_processed_file_path,
+    generate_random_filename,
+)
 
 fake = Faker()
 
 logger = logging.getLogger("seeder")
 
 
-def generate_factory_images(count=1, source="upload"):
+def generate_factory_images(count=1, source="upload", use_files=False):
+    filenames = [
+        generate_random_filename(extension="jpg") for _ in range(count)
+    ]
+    sample_image_path = get_sample_image_path("sample.jpg")
+    if use_files:
+        for filename in filenames:
+            if source == "upload":
+                destination = get_uploaded_file_path(filename)
+                copyfile(sample_image_path, destination)
+            else:
+                destination = get_processed_file_path(filename)
+                copyfile(sample_image_path, destination)
     return [
         Image(
-            name=generate_random_filename(extension="jpg"),
+            name=filenames[i],
             size=fake.random_int(min=1, max=100),
             width=fake.random_int(min=1, max=100),
             height=fake.random_int(min=1, max=100),
             source=source,
-            storage_name=generate_random_filename(),
+            storage_name=filenames[i],
         )
-        for _ in range(count)
+        for i in range(count)
     ]
 
 
@@ -41,49 +56,46 @@ def generate_factory_facial_areas(count=1):
     ]
 
 
+def generate_factory_faces(count=1, use_files=False):
+    facial_areas = generate_factory_facial_areas(5)
+    parents = generate_factory_images(5, use_files=use_files)
+    images = generate_factory_images(5, "processed", use_files=use_files)
+    return [
+        Face(
+            score=fake.random_int(min=1, max=100),
+            image=images[index],
+            parent=parents[index],
+            facial_area=facial_areas[index],
+        )
+        for index in range(count)
+    ]
+
+
 def run_image_seeder():
     logger.info("Running image seeder...")
-    file_path = get_sample_image_path("sample.jpg")
-    for _ in range(5):
-        with open(file_path, mode="rb") as f:
-            file_storage_object = FileStorage(
-                f, filename=generate_random_filename(extension="jpg")
-            )
-            save_uploaded_image(file_storage_object)
+    faces = generate_factory_images(5)
+    db.session.add_all(faces)
+    db.session.commit()
     logger.info("Image seeder has completed")
 
 
 def run_face_seeder():
     logger.info("Running face seeder...")
-    faces = []
-    files = generate_factory_images(5, "processed")
-    parents = generate_factory_images(5)
-    facial_areas = generate_factory_facial_areas(5)
-    for i in range(5):
-        faces.append(
-            Face(
-                score=fake.random_int(min=1, max=100),
-                image=files[i],
-                parent=parents[i],
-                facial_area=facial_areas[i],
-            )
-        )
-    db.session.add_all(files + parents + facial_areas + faces)
+    faces = generate_factory_faces(5, use_files=True)
+    db.session.add_all(faces)
     db.session.commit()
     logger.info("Face seeder has completed")
 
 
 def run_target_seeder():
     logger.info("Running target seeder...")
-    run_face_seeder()
-    faces = Face.query.all()
-    tags = [TargetTag(name=fake.name()) for _ in range(5)]
-    target = Target(title=fake.name(), description=fake.text())
-    for index in range(5):
-        target.tags.append(tags[index])
-        target.faces.append(faces[index])
+    target = Target(
+        title=fake.name(),
+        description=fake.text(),
+        faces=generate_factory_faces(5, use_files=True),
+        tags=[TargetTag(name=fake.name()) for _ in range(5)],
+    )
     db.session.add(target)
-    db.session.add_all(tags)
     db.session.commit()
     logger.info("Target seeder has completed")
 
