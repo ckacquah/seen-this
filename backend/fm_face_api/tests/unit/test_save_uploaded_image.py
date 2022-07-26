@@ -32,11 +32,13 @@ def test_save_uploaded_image(client, monkeypatch):
     mock_secure_filename = Mock(return_value="name.jpg")
 
     monkeypatch.setattr(
-        "fm_face.modules.image.services.convert_FileStorage_object_to_PIL_Image",
+        "fm_face.modules.image.services."
+        "convert_FileStorage_object_to_PIL_Image",
         mock_convert_FileStorage_object_to_PIL_Image,
     )
     monkeypatch.setattr(
-        "fm_face.modules.image.services.store_PIL_Image_as_jpeg_in_uploads_folder",
+        "fm_face.modules.image.services."
+        "store_PIL_Image_as_jpeg_in_uploads_folder",
         mock_store_PIL_Image_as_jpeg_in_uploads_folder,
     )
     monkeypatch.setattr(
