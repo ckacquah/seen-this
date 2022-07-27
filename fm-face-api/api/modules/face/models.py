@@ -10,7 +10,7 @@ class FacialArea(BaseModel):
 
 
 class Face(BaseModel):
-    score = db.Column(db.Integer, nullable=False)
+    score = db.Column(db.Float, nullable=False)
 
     image_uuid = db.Column(
         db.String(255), db.ForeignKey(Image.uuid), nullable=False
