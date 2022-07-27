@@ -73,7 +73,9 @@ def store_PIL_Image_as_jpeg_in_uploads_folder(PIL_image):
     uploaded_image_width, uploaded_image_height = PIL_image.size
     uploaded_file_name = generate_random_filename(extension="jpg")
     uploaded_file_path = get_uploaded_file_path(uploaded_file_name)
-    PIL_image.save(uploaded_file_path)
+    if PIL_image.mode in ["RGBA", "P"]:
+        PIL_image = PIL_image.convert("RGB")
+    PIL_image.save(uploaded_file_path, format="JPEG", quality=100)
     uploaded_file_size = os.path.getsize(uploaded_file_path)
     return {
         "size": uploaded_file_size,
@@ -84,14 +86,14 @@ def store_PIL_Image_as_jpeg_in_uploads_folder(PIL_image):
     }
 
 
-def store_processed_image_info_to_db(processed_image_info):
+def store_processed_image_info_to_db(detected_face_image_info):
     image = Image(
         source="processed",
-        size=processed_image_info["size"],
-        width=processed_image_info["width"],
-        height=processed_image_info["height"],
-        name=processed_image_info["file_name"],
-        storage_name=processed_image_info["file_name"],
+        size=detected_face_image_info["size"],
+        width=detected_face_image_info["width"],
+        height=detected_face_image_info["height"],
+        name=detected_face_image_info["file_name"],
+        storage_name=detected_face_image_info["file_name"],
     )
     db.session.add(image)
     db.session.commit()
@@ -115,6 +117,8 @@ def store_uploaded_image_info_to_db(uploaded_image_info):
 def detect_faces_from_image(image_path):
     PIL_image = PIL.Image.open(image_path)
     detected_faces = RetinaFace.detect_faces(image_path)
+    if isinstance(detected_faces, tuple):
+        return {}
     for face_id, detected_face_info in detected_faces.items():
         detected_faces[face_id].update(
             {
@@ -126,45 +130,45 @@ def detect_faces_from_image(image_path):
     return detected_faces
 
 
-def store_detected_faces_images_to_processed_folder(detected_faces):
-    for face_id, detected_face_info in detected_faces.items():
-        detected_faces[face_id].update(
+def store_detected_faces_images_to_processed_folder(faces):
+    for face_id, face_info in faces.items():
+        faces[face_id].update(
             {
                 "image_info": store_PIL_Image_as_jpeg_in_processed_folder(
-                    detected_face_info["PIL_image"]
-                )
+                    face_info["PIL_image"]
+                ),
             }
         )
-    return detected_faces
+    return faces
 
 
-def store_detected_faces_image_info_to_db(detected_faces):
-    for face_id, detected_face_info in detected_faces.items():
-        detected_faces[face_id].update(
+def store_detected_faces_image_info_to_db(faces):
+    for face_id, face_info in faces.items():
+        faces[face_id].update(
             {
                 "image": store_processed_image_info_to_db(
-                    detected_face_info["image_info"]
-                )
+                    face_info["image_info"]
+                ),
             }
         )
-    return detected_faces
+    return faces
 
 
-def store_detected_faces_to_db(detected_faces, parent):
-    faces = [
+def store_detected_faces_to_db(faces, parent):
+    detected_faces = [
         Face(
             parent=parent,
             image=detected_face["image"],
-            score=detected_face["score"],
+            score=detected_face["score"].item(),
             facial_area=FacialArea(
-                x1=detected_face["facial_area"][0],
-                y1=detected_face["facial_area"][1],
-                x2=detected_face["facial_area"][2],
-                y2=detected_face["facial_area"][3],
+                x1=detected_face["facial_area"][0].item(),
+                y1=detected_face["facial_area"][1].item(),
+                x2=detected_face["facial_area"][2].item(),
+                y2=detected_face["facial_area"][3].item(),
             ),
         )
-        for detected_face in detected_faces.values()
+        for detected_face in faces.values()
     ]
-    db.session.add_all(faces)
+    db.session.add_all(detected_faces)
     db.session.commit()
-    return faces_schema.dump(faces)
+    return faces_schema.dump(detected_faces)

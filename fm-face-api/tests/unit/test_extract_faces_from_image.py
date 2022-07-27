@@ -53,6 +53,9 @@ def test_extract_faces_from_image_object(client, monkeypatch):
     mock_get_uploaded_file_path = Mock(return_value=SAMPLE_IMAGE_PATH)
     mock_detect_faces_from_image = Mock(return_value=SAMPLE_FACES)
     mock_store_detected_faces_to_db = Mock(return_value={})
+    mock_store_detected_faces_image_info_to_db = Mock(
+        return_value=SAMPLE_FACES
+    )
     mock_store_detected_faces_images_to_disk = Mock(return_value=SAMPLE_FACES)
 
     monkeypatch.setattr(
@@ -69,6 +72,11 @@ def test_extract_faces_from_image_object(client, monkeypatch):
     )
     monkeypatch.setattr(
         "api.jobs.extract_faces_from_image."
+        "store_detected_faces_image_info_to_db",
+        mock_store_detected_faces_image_info_to_db,
+    )
+    monkeypatch.setattr(
+        "api.jobs.extract_faces_from_image."
         "store_detected_faces_images_to_processed_folder",
         mock_store_detected_faces_images_to_disk,
     )
@@ -77,6 +85,9 @@ def test_extract_faces_from_image_object(client, monkeypatch):
 
     mock_get_uploaded_file_path.assert_called_once_with(image.storage_name)
     mock_detect_faces_from_image.assert_called_once_with(SAMPLE_IMAGE_PATH)
+    mock_store_detected_faces_image_info_to_db.assert_called_once_with(
+        SAMPLE_FACES
+    )
     mock_store_detected_faces_to_db.assert_called_once_with(
         SAMPLE_FACES, parent=image
     )
