@@ -1,3 +1,4 @@
+from unittest.mock import Mock
 from api.utils.testing import (
     upload_image,
     sample_images,
@@ -6,7 +7,7 @@ from api.utils.testing import (
 from api.modules.image.models import Image
 
 
-def test_upload_image(client):
+def test_upload_image(client, monkeypatch):
     """
     GIVEN a flask application configured for testing
     WHEN the '/image/upload' is posted to (POST) with a valid image
@@ -14,15 +15,21 @@ def test_upload_image(client):
          successfully
     """
     image_file_name = sample_images[0]
+
+    mock_image_schema_dump = Mock(return_value={})
+
+    monkeypatch.setattr(
+        "api.modules.image.controllers.image_schema.dump",
+        mock_image_schema_dump,
+    )
+
     response = upload_image(client, image_file_name)
     image = Image.query.first()
+
+    mock_image_schema_dump.assert_called_once_with(image)
+
     assert response.status_code == 201
-    assert response.json["name"] == image.name
-    assert response.json["uuid"] == image.uuid
-    assert response.json["size"] == image.size
-    assert response.json["width"] == image.width
-    assert response.json["height"] == image.height
-    assert response.json["storage_name"] == image.storage_name
+    assert response.json == {}
 
 
 def test_upload_image_with_invalid_file(client):
