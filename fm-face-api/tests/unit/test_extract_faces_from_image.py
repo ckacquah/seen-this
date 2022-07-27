@@ -1,4 +1,5 @@
 import PIL
+import numpy as np
 from unittest.mock import Mock, call
 
 from api.jobs.extract_faces_from_image import extract_faces_from_image
@@ -31,12 +32,12 @@ PROCESSED_IMAGE_INFO = {
 
 SAMPLE_FACES = {
     "face_1": {
-        "score": 0.9995879530906677,
-        "facial_area": [456, 30, 495, 80],
+        "score": np.float64(0.9995879530906677),
+        "facial_area": np.array([456, 30, 495, 80]),
     },
     "face_2": {
-        "score": 0.9995411634445019,
-        "facial_area": [261, 58, 297, 107],
+        "score": np.float64(0.9995411634445019),
+        "facial_area": np.array([261, 58, 297, 107]),
     },
 }
 
