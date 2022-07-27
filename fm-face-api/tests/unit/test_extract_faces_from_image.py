@@ -33,11 +33,21 @@ PROCESSED_IMAGE_INFO = {
 SAMPLE_FACES = {
     "face_1": {
         "score": np.float64(0.9995879530906677),
-        "facial_area": np.array([456, 30, 495, 80]),
+        "facial_area": [
+            np.int64(456),
+            np.int64(30),
+            np.int64(495),
+            np.int64(80),
+        ],
     },
     "face_2": {
         "score": np.float64(0.9995411634445019),
-        "facial_area": np.array([261, 58, 297, 107]),
+        "facial_area": [
+            np.int64(261),
+            np.int64(58),
+            np.int64(297),
+            np.int64(107),
+        ],
     },
 }
 
