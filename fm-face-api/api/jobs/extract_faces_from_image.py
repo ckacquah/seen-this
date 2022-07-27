@@ -1,5 +1,3 @@
-import json
-
 from api.jobs import celery
 from api.utils import get_uploaded_file_path
 from api.modules.image.models import Image
@@ -22,4 +20,4 @@ def extract_faces_from_image(image_id):
         faces,
         parent=image,
     )
-    return json.dumps(faces)
+    return faces
