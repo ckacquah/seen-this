@@ -20,10 +20,15 @@ def test_start_face_extraction_job(client, monkeypatch):
     run_image_seeder()
     image = Image.query.first()
 
+    mock_face_extraction_job_schema_dump = Mock(return_value={})
     mock_extract_faces_from_image_apply_async = Mock(
         return_value=FakeTaskResult()
     )
 
+    monkeypatch.setattr(
+        "api.modules.image.controllers.face_extraction_job_schema.dump",
+        mock_face_extraction_job_schema_dump,
+    )
     monkeypatch.setattr(
         "api.modules.image.controllers."
         "extract_faces_from_image.apply_async",
@@ -33,21 +38,13 @@ def test_start_face_extraction_job(client, monkeypatch):
     response = client.post(f"/image/{image.uuid}/extract-faces")
     job = FaceExtractionJob.query.first()
 
+    mock_face_extraction_job_schema_dump.assert_called_once_with(job)
     mock_extract_faces_from_image_apply_async.assert_called_once_with(
         args=(image.uuid,),
     )
 
     assert response.status_code == 201
-    assert response.json["status"] == "started"
-    assert response.json["image_uuid"] == image.uuid
-    assert response.json["completion_time"] is None
-    assert response.json["percentage_complete"] == 0
-    assert job.uuid == response.json["uuid"]
-    assert job.status == "started"
-    assert job.image_uuid == image.uuid
-    assert job.celery_task_id == "fake-task-id"
-    assert job.completion_time is None
-    assert job.percentage_complete == 0
+    assert response.json == {}
 
 
 def test_start_face_extraction_job_with_invalid_image_id(client, monkeypatch):
@@ -89,16 +86,21 @@ def test_get_face_extraction_job_status(client, monkeypatch):
     """
     run_job_seeder()
 
+    mock_face_extraction_job_schema_dump = Mock(return_value={})
+
+    monkeypatch.setattr(
+        "api.modules.jobs.controllers.face_extraction_job_schema.dump",
+        mock_face_extraction_job_schema_dump,
+    )
+
     job = FaceExtractionJob.query.first()
 
     response = client.get(f"/extraction-jobs/{job.uuid}")
 
+    mock_face_extraction_job_schema_dump.assert_called_once_with(job)
+
     assert response.status_code == 200
-    assert response.json["uuid"] == job.uuid
-    assert response.json["status"] == job.status
-    assert response.json["image_uuid"] == job.image_uuid
-    assert response.json["completion_time"] == job.completion_time
-    assert response.json["percentage_complete"] == job.percentage_complete
+    assert response.json == {}
 
 
 def test_get_face_extraction_job_status_with_invalid_job_id(client):
