@@ -284,37 +284,25 @@ def test_store_detected_faces_to_db(client, monkeypatch):
     """
     run_image_seeder()
 
+    mock_faces_schema_dump = Mock(return_value=[])
+
+    monkeypatch.setattr(
+        "api.modules.image.services.faces_schema.dump",
+        mock_faces_schema_dump,
+    )
+
     images = Image.query.all()
     face_image = images[0]
     parent_image = images[1]
 
     sample_detected_faces = SAMPLE_FACES.copy()
-
     for face_id, face_info in sample_detected_faces.items():
         sample_detected_faces[face_id].update({"image": face_image})
 
-    faces = store_detected_faces_to_db(sample_detected_faces, parent_image)
+    result = store_detected_faces_to_db(sample_detected_faces, parent_image)
+    faces = Face.query.all()
 
-    assert len(Face.query.all()) == 2
-    for face in faces:
-        face_dao = Face.query.get(face["uuid"])
-        sample_face_dict = None
-        for sample_face in sample_detected_faces.values():
-            if sample_face["score"] == face_dao.score:
-                sample_face_dict = sample_face
+    mock_faces_schema_dump.assert_called_once_with(faces)
 
-        assert face_dao.uuid == face["uuid"]
-        assert face_dao.score == face["score"]
-        assert face_dao.uuid == face["uuid"]
-        assert face_dao.image_uuid == face["image_uuid"]
-        assert face_dao.parent_uuid == face["parent_uuid"]
-        assert face_dao.facial_area.x1 == face["facial_area"]["x1"]
-        assert face_dao.facial_area.y1 == face["facial_area"]["y1"]
-        assert face_dao.facial_area.x2 == face["facial_area"]["x2"]
-        assert face_dao.facial_area.y2 == face["facial_area"]["y2"]
-        assert face_dao.image == face_image
-        assert face_dao.parent == parent_image
-        assert face_dao.facial_area.x1 == sample_face_dict["facial_area"][0]
-        assert face_dao.facial_area.y1 == sample_face_dict["facial_area"][1]
-        assert face_dao.facial_area.x2 == sample_face_dict["facial_area"][2]
-        assert face_dao.facial_area.y2 == sample_face_dict["facial_area"][3]
+    assert result == []
+    assert len(faces) == 2
