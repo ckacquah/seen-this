@@ -17,7 +17,7 @@ def test_delete_target_by_id(client):
     assert response.status_code == 200
     assert response.json["message"] == "target has been deleted successfully"
     assert target.query.get(target.uuid) is None
-    assert len(target.query.all()) == 0
+    assert len(Target.query.all()) == 4
 
 
 def test_delete_target_by_id_with_unknown_target_id(client):
