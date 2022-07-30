@@ -2,8 +2,10 @@ import PIL
 import numpy as np
 from unittest.mock import Mock, call
 
+from api.base_model import db
 from api.jobs.extract_faces_from_image import extract_faces_from_image
-from api.utils.testing.seeders import run_image_seeder
+from api.utils.testing.seeders import run_image_seeder, run_job_seeder
+from api.modules.jobs.models import FaceExtractionJob
 from api.modules.face.models import Face
 from api.modules.image.models import Image
 from api.modules.image.services import (
@@ -58,8 +60,9 @@ def test_extract_faces_from_image_object(client, monkeypatch):
     WHEN faces are extracted from the image
     THEN check that faces are extracted and stored correctly
     """
-    run_image_seeder()
-    image = Image.query.first()
+    run_job_seeder()
+
+    job = FaceExtractionJob.query.first()
 
     mock_get_uploaded_file_path = Mock(return_value=SAMPLE_IMAGE_PATH)
     mock_detect_faces_from_image = Mock(return_value=SAMPLE_FACES)
@@ -92,21 +95,26 @@ def test_extract_faces_from_image_object(client, monkeypatch):
         mock_store_detected_faces_images_to_disk,
     )
 
-    faces = extract_faces_from_image.apply(args=(image.uuid,)).get()
+    faces = extract_faces_from_image.apply(args=(job.uuid,)).get()
 
-    mock_get_uploaded_file_path.assert_called_once_with(image.storage_name)
+    mock_get_uploaded_file_path.assert_called_once_with(job.image.storage_name)
     mock_detect_faces_from_image.assert_called_once_with(SAMPLE_IMAGE_PATH)
     mock_store_detected_faces_image_info_to_db.assert_called_once_with(
         SAMPLE_FACES
     )
     mock_store_detected_faces_to_db.assert_called_once_with(
-        SAMPLE_FACES, parent=image
+        SAMPLE_FACES, parent=job.image
     )
     mock_store_detected_faces_images_to_disk.assert_called_once_with(
         SAMPLE_FACES
     )
 
+    db.session.refresh(job)  # refresh object
     assert faces == {}
+    assert job.status == "completed"
+    assert job.celery_task_id is not None
+    assert job.completion_time is not None
+    assert job.percentage_complete == 100
 
 
 def test_store_PIL_Image_as_jpeg_in_processed_folder(client, monkeypatch):

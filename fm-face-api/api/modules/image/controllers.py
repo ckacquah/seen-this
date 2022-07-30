@@ -70,16 +70,18 @@ def download_image(filename):
 
 @image_blueprint.route("/<image_id>/extract-faces", methods=["POST"])
 def start_face_extraction_job(image_id):
-    if Image.query.get(image_id) is None:
+    image = Image.query.get(image_id)
+    if image is None:
         return jsonify({"message": "Image not found"}), 404
 
-    task = extract_faces_from_image.apply_async(args=(image_id,))
     job = FaceExtractionJob(
+        image=image,
         status="started",
-        image_uuid=image_id,
-        celery_task_id=task.id,
         percentage_complete=0,
     )
     db.session.add(job)
     db.session.commit()
+
+    extract_faces_from_image.apply_async(args=(job.uuid,))
+
     return jsonify(face_extraction_job_schema.dump(job)), 201

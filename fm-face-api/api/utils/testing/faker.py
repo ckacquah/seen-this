@@ -79,10 +79,10 @@ def generate_fake_targets(count=1, use_files=False):
     ]
 
 
-def generate_fake_extraction_job(count=1):
+def generate_fake_extraction_job(count=1, use_files=False):
     return [
         FaceExtractionJob(
-            image_uuid="123",
+            image=generate_fake_images(1, use_files=use_files)[0],
             status="started",
             percentage_complete=0,
             celery_task_id="celery_task_id",

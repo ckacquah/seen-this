@@ -34,7 +34,7 @@ def run_target_seeder():
 
 def run_job_seeder():
     logger.info("Running job seeder...")
-    db.session.add_all(generate_fake_extraction_job())
+    db.session.add_all(generate_fake_extraction_job(use_files=True))
     db.session.commit()
     logger.info("Job seeder has completed")
 

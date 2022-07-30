@@ -40,7 +40,7 @@ def test_start_face_extraction_job(client, monkeypatch):
 
     mock_face_extraction_job_schema_dump.assert_called_once_with(job)
     mock_extract_faces_from_image_apply_async.assert_called_once_with(
-        args=(image.uuid,),
+        args=(job.uuid,),
     )
 
     assert response.status_code == 201
