@@ -5,13 +5,15 @@ name: fm-face-api
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
     paths:
+      - ".github/workflows/python-app.yml"
       - 'fm-face-api/**.py'
       - 'fm-face-api/requirements.txt'
   pull_request:
     branches: [ "master" ]
     paths:
+      - ".github/workflows/python-app.yml"
       - 'fm-face-api/**.py'
       - 'fm-face-api/requirements.txt'
       
