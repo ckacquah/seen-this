@@ -8,7 +8,6 @@ from werkzeug.utils import secure_filename
 
 from api.base_model import db
 from api.modules.face.models import Face, FacialArea
-from api.modules.face.schemas import faces_schema
 from api.modules.image.models import Image
 from api.modules.image.schemas import image_schema
 from api.utils import (
@@ -171,4 +170,4 @@ def store_detected_faces_to_db(faces, parent):
     ]
     db.session.add_all(detected_faces)
     db.session.commit()
-    return faces_schema.dump(detected_faces)
+    return detected_faces

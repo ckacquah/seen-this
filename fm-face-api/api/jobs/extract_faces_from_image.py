@@ -5,6 +5,7 @@ from api.base_model import db
 from api.jobs import celery
 from api.utils import get_uploaded_file_path
 from api.modules.jobs.models import FaceExtractionJob
+from api.modules.face.schemas import faces_schema
 from api.modules.image.services import (
     detect_faces_from_image,
     store_detected_faces_to_db,
@@ -31,9 +32,10 @@ def extract_faces_from_image(job_id):
     job = FaceExtractionJob.query.get(job_id)
     image = job.image
     faces = execute_face_extraction_pipeline(image.storage_name)
-    results = store_detected_faces_to_db(faces, parent=image)
+    faces = store_detected_faces_to_db(faces, parent=image)
+    job.results = faces
     job.status = "completed"
     job.completion_time = datetime.now()
     job.percentage_complete = 100
     db.session.commit()
-    return results
+    return faces_schema.dump(faces)

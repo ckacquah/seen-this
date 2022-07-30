@@ -4,7 +4,11 @@ from unittest.mock import Mock, call
 
 from api.base_model import db
 from api.jobs.extract_faces_from_image import extract_faces_from_image
-from api.utils.testing.seeders import run_image_seeder, run_job_seeder
+from api.utils.testing.seeders import (
+    run_image_seeder,
+    run_job_seeder,
+    run_face_seeder,
+)
 from api.modules.jobs.models import FaceExtractionJob
 from api.modules.face.models import Face
 from api.modules.image.models import Image
@@ -60,18 +64,25 @@ def test_extract_faces_from_image_object(client, monkeypatch):
     WHEN faces are extracted from the image
     THEN check that faces are extracted and stored correctly
     """
+    run_face_seeder()
     run_job_seeder()
 
     job = FaceExtractionJob.query.first()
+    faces = Face.query.all()
 
+    mock_faces_schema_dump = Mock(return_value=[])
     mock_get_uploaded_file_path = Mock(return_value=SAMPLE_IMAGE_PATH)
     mock_detect_faces_from_image = Mock(return_value=SAMPLE_FACES)
-    mock_store_detected_faces_to_db = Mock(return_value={})
+    mock_store_detected_faces_to_db = Mock(return_value=faces)
     mock_store_detected_faces_image_info_to_db = Mock(
         return_value=SAMPLE_FACES
     )
     mock_store_detected_faces_images_to_disk = Mock(return_value=SAMPLE_FACES)
 
+    monkeypatch.setattr(
+        "api.jobs.extract_faces_from_image.faces_schema.dump",
+        mock_faces_schema_dump,
+    )
     monkeypatch.setattr(
         "api.jobs.extract_faces_from_image.get_uploaded_file_path",
         mock_get_uploaded_file_path,
@@ -95,8 +106,9 @@ def test_extract_faces_from_image_object(client, monkeypatch):
         mock_store_detected_faces_images_to_disk,
     )
 
-    faces = extract_faces_from_image.apply(args=(job.uuid,)).get()
+    results = extract_faces_from_image.apply(args=(job.uuid,)).get()
 
+    mock_faces_schema_dump.assert_called_once_with(faces)
     mock_get_uploaded_file_path.assert_called_once_with(job.image.storage_name)
     mock_detect_faces_from_image.assert_called_once_with(SAMPLE_IMAGE_PATH)
     mock_store_detected_faces_image_info_to_db.assert_called_once_with(
@@ -109,12 +121,16 @@ def test_extract_faces_from_image_object(client, monkeypatch):
         SAMPLE_FACES
     )
 
-    db.session.refresh(job)  # refresh object
-    assert faces == {}
+    db.session.refresh(job)
+    assert results == []
     assert job.status == "completed"
     assert job.celery_task_id is not None
     assert job.completion_time is not None
     assert job.percentage_complete == 100
+    # The results are out of order and hence must be sorted before comparison
+    assert Face.query.all().sort(key=lambda x: x.uuid) == job.results.sort(
+        key=lambda x: x.uuid
+    )
 
 
 def test_store_PIL_Image_as_jpeg_in_processed_folder(client, monkeypatch):
@@ -290,13 +306,6 @@ def test_store_detected_faces_to_db(client, monkeypatch):
     """
     run_image_seeder()
 
-    mock_faces_schema_dump = Mock(return_value=[])
-
-    monkeypatch.setattr(
-        "api.modules.image.services.faces_schema.dump",
-        mock_faces_schema_dump,
-    )
-
     images = Image.query.all()
     face_image = images[0]
     parent_image = images[1]
@@ -308,7 +317,5 @@ def test_store_detected_faces_to_db(client, monkeypatch):
     result = store_detected_faces_to_db(sample_detected_faces, parent_image)
     faces = Face.query.all()
 
-    mock_faces_schema_dump.assert_called_once_with(faces)
-
-    assert result == []
+    assert result == faces
     assert len(faces) == 2

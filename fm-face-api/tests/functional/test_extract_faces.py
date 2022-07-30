@@ -114,3 +114,41 @@ def test_get_face_extraction_job_status_with_invalid_job_id(client):
 
     assert response.status_code == 404
     assert response.json["message"] == "Extraction job not found"
+
+
+def test_get_face_extraction_job_results(client, monkeypatch):
+    """
+    GIVEN a flask application configured for testing
+    WHEN the '/extraction-jobs/<job_id>/results' is requested (GET) with
+         invalid job_id
+    THEN check that reponse is valid
+    """
+    run_job_seeder()
+
+    mock_faces_schema_dump = Mock(return_value={})
+
+    monkeypatch.setattr(
+        "api.modules.jobs.controllers.faces_schema.dump",
+        mock_faces_schema_dump,
+    )
+
+    job = FaceExtractionJob.query.first()
+
+    response = client.get(f"/extraction-jobs/{str(job.uuid)}/results")
+
+    mock_faces_schema_dump.assert_called_once_with(job.results)
+    assert response.status_code == 200
+    assert response.json == {}
+
+
+def test_get_face_extraction_job_results_with_invalid_job_id(client):
+    """
+    GIVEN a flask application configured for testing
+    WHEN the '/extraction-jobs/<job_id>/results' is requested (GET) with
+         invalid job_id
+    THEN check that a status code of '404' is returned
+    """
+    response = client.get(f"/extraction-jobs/{str(uuid.uuid4())}/results")
+
+    assert response.status_code == 404
+    assert response.json["message"] == "Extraction job not found"
