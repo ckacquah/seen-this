@@ -6,8 +6,8 @@ from api.modules.image.models import Image
 from api.modules.image.services import (
     detect_faces_from_image,
     store_detected_faces_to_db,
-    store_detected_faces_image_info_to_db,
     store_detected_face_images_to_disk,
+    store_detected_faces_image_info_to_db,
 )
 
 
