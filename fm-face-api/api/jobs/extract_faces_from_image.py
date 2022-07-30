@@ -7,7 +7,7 @@ from api.modules.image.services import (
     detect_faces_from_image,
     store_detected_faces_to_db,
     store_detected_faces_image_info_to_db,
-    store_detected_faces_images_to_processed_folder,
+    store_detected_face_images_to_disk,
 )
 
 
@@ -17,8 +17,8 @@ def execute_face_extraction_pipeline(image_storage_name):
         (
             get_uploaded_file_path,
             detect_faces_from_image,
+            store_detected_face_images_to_disk,
             store_detected_faces_image_info_to_db,
-            store_detected_faces_images_to_processed_folder,
         ),
         image_storage_name,
     )

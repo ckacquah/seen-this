@@ -130,7 +130,7 @@ def detect_faces_from_image(image_path):
     return detected_faces
 
 
-def store_detected_faces_images_to_processed_folder(faces):
+def store_detected_face_images_to_disk(faces):
     for face_id, face_info in faces.items():
         faces[face_id].update(
             {

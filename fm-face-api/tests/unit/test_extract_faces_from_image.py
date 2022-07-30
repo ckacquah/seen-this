@@ -12,7 +12,7 @@ from api.modules.image.services import (
     store_processed_image_info_to_db,
     store_detected_faces_image_info_to_db,
     store_PIL_Image_as_jpeg_in_processed_folder,
-    store_detected_faces_images_to_processed_folder,
+    store_detected_face_images_to_disk,
 )
 from api.utils.testing import (
     get_sample_image_path,
@@ -88,7 +88,7 @@ def test_extract_faces_from_image_object(client, monkeypatch):
     )
     monkeypatch.setattr(
         "api.jobs.extract_faces_from_image."
-        "store_detected_faces_images_to_processed_folder",
+        "store_detected_face_images_to_disk",
         mock_store_detected_faces_images_to_disk,
     )
 
@@ -207,7 +207,7 @@ def test_detect_faces_from_image(client, monkeypatch):
         assert face_info["facial_area"] == SAMPLE_FACES[face_id]["facial_area"]
 
 
-def test_store_detected_faces_images_to_processed_folder(client, monkeypatch):
+def test_store_detected_face_images_to_disk(client, monkeypatch):
     """
     GIVEN the detected faces dict
     WHEN the object is stored to the processed folder
@@ -228,9 +228,7 @@ def test_store_detected_faces_images_to_processed_folder(client, monkeypatch):
         mock_store_PIL_Image_as_jpeg_in_processed_folder,
     )
 
-    faces = store_detected_faces_images_to_processed_folder(
-        sample_detected_faces
-    )
+    faces = store_detected_face_images_to_disk(sample_detected_faces)
 
     mock_store_PIL_Image_as_jpeg_in_processed_folder.assert_called_with(
         SAMPLE_PIL_IMAGE
