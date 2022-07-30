@@ -62,8 +62,6 @@ isort==5.10.1
 itsdangerous==2.1.2
 jedi==0.18.1
 Jinja2==3.1.2
-jupyter-client==7.3.4
-jupyter-core==4.10.0
 keras==2.9.0
 Keras-Preprocessing==1.1.2
 kiwisolver==1.4.3
@@ -112,7 +110,6 @@ pytest==7.1.2
 pytest-mock==3.8.2
 python-dateutil==2.8.2
 pytz==2022.1
-pywin32==304
 pyzmq==23.1.0
 rabbitmq==0.2.0
 redis==4.3.3
