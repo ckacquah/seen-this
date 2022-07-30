@@ -5,7 +5,7 @@ name: fm-face-api
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "dev" ]
     paths:
       - 'fm-face-api/**.py'
       - 'fm-face-api/requirements.txt'
