@@ -6,9 +6,13 @@ name: fm-face-api
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - 'fm-face-api/**.py'
   pull_request:
     branches: [ "master" ]
-
+    paths:
+      - 'fm-face-api/**.py'
+      
 permissions:
   contents: read
 
