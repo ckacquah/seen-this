@@ -8,10 +8,12 @@ on:
     branches: [ "master" ]
     paths:
       - 'fm-face-api/**.py'
+      - 'fm-face-api/requirements.txt'
   pull_request:
     branches: [ "master" ]
     paths:
       - 'fm-face-api/**.py'
+      - 'fm-face-api/requirements.txt'
       
 permissions:
   contents: read
